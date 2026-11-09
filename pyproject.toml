@@ -1,0 +1,19 @@
+[project]
+name = "chimchak"
+version = "0.1.0"
+description = "침착 — 데이터로 확인하는 내 주변의 침수 위험 주차장 (Streamlit 웹앱)"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# 한글 문장 문자열이 자주 넘친다. 줄 나눔은 ruff format 에 맡긴다.
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

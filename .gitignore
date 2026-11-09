@@ -1,0 +1,28 @@
+# 가상환경 — 팀원마다 운영체제·경로가 달라서 올리지 않는다
+.venv/
+venv/
+env/
+
+# 파이썬 부산물
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# 비밀값 — 절대 올리지 않는다
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.local.txt
+
+# 개인 도구 설정
+.claude/
+.worklog/
+
+# 운영체제·편집기
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
