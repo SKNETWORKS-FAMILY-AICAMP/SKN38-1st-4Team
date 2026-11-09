@@ -1,0 +1,10 @@
+# 프론트엔드 기획안: 흰색·파란색 기본(위험도 표시는 붉은 계열로 따로 칠한다)
+[theme]
+base = "light"
+primaryColor = "#1E6FD9"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F6FC"
+textColor = "#1B2430"
+
+[client]
+toolbarMode = "minimal"
