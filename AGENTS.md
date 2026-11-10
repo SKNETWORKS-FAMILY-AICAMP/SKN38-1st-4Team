@@ -56,6 +56,7 @@ SKN38-1st-4Team/
 ├── docs/
 │   ├── product-plan.md        화면 기획
 │   ├── risk-index.md          위험지수
+│   ├── erd.sql                ERD 테이블 정의(MySQL DDL)
 │   └── plan-images/           기획 시안 이미지
 ├── .streamlit/config.toml     Streamlit 테마(흰색·파란색)
 ├── .github/workflows/ci.yml   PR·main 에 검사 자동 실행
