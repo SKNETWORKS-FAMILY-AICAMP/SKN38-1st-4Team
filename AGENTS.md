@@ -116,12 +116,14 @@ Windows(PowerShell)는 한 줄씩 실행합니다.
 
 ## git 작업 순서
 
-1. `git switch main && git pull` 로 최신을 받고 작업 브랜치를 만듭니다: `git switch -c <종류>/<내용>` (예: `feat/explore-map`).
+팀 저장소(`SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team`)를 각자 포크해서 작업합니다. 리모트는 둘입니다: `origin` 은 내 포크, `upstream` 은 팀 저장소. `upstream` 이 없으면 `git remote add upstream https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git` 로 더합니다.
+
+1. `git switch main && git pull --ff-only upstream main && git push origin main` 으로 팀 저장소 최신을 받아 내 포크 main 을 맞추고, 작업 브랜치를 만듭니다: `git switch -c <종류>/<내용>` (예: `feat/explore-map`).
 2. 한 브랜치에는 한 가지 일만 합니다. 관계없는 파일은 고치지 않습니다.
 3. 올릴 파일만 골라 `git add` 하고, 커밋 전에 `git status` 로 확인합니다.
 4. 커밋 메시지는 Conventional Commits 형식에 한국어 제목을 씁니다: `<종류>(<범위>): <요약>`. 종류는 feat, fix, docs, refactor, test, chore. 예: `feat(탐색): 반경 선택과 거리순 목록`
-5. push 한 뒤 PR 을 만듭니다. PR 본문은 문제 → 해결 → 영향 → 검증을 한 줄씩 씁니다.
-6. GitHub Actions 검사가 초록이면 squash 병합합니다. main 에 직접 push 하지 않고 force push 하지 않습니다.
+5. `git push -u origin <브랜치>` 로 내 포크에 올리고, 팀 저장소 `main` 을 base 로 PR 을 만듭니다. PR 본문은 문제 → 해결 → 영향 → 검증을 한 줄씩 씁니다.
+6. 팀 저장소의 GitHub Actions 검사가 초록이면 squash 병합하고, 1번으로 돌아가 main 을 다시 맞춥니다. 팀 저장소 main 에 직접 push 하지 않고 force push 하지 않습니다. 내 포크 main 에서는 커밋하지 않고 팀 저장소 main 을 따라가게만 둡니다.
 7. `.venv`, 비밀값, 100MB 넘는 파일(GitHub 가 거부함)은 올리지 않습니다.
 
 ## 모르는 것은 지어내지 않기
