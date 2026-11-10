@@ -8,7 +8,7 @@ SKN38 1차 프로젝트 4팀. 2025년 강수량, 지형(고도), 과거 침수 �
 
 | 문서 | 내용 |
 |---|---|
-| [AGENTS.md](AGENTS.md) | AI 에이전트(Claude Code, Codex)와 사람이 함께 따르는 작업 지침: 폴더 구조, 코드 규칙, 화면에서 지킬 것, 검사, git 순서 |
+| [AGENTS.md](AGENTS.md) | AI 에이전트(Claude Code, Codex)와 사람이 함께 따르는 작업 지침: 폴더 구조, 코드 규칙, 화면에서 지킬 것, 검사, 에이전트가 대신 하는 git 작업 |
 | [CLAUDE.md](CLAUDE.md) | Claude Code 가 AGENTS.md 를 읽게 하는 연결 |
 | [docs/product-plan.md](docs/product-plan.md) | 화면 기획: 메뉴, 화면별 구성, 지운 기능, 색, 문구 규칙 |
 | [docs/risk-index.md](docs/risk-index.md) | 위험지수: 사용 자료와 출처, 계산식, 가중치, 등급, 안내 문구, 앱 입력 자료 형식 |
@@ -16,18 +16,30 @@ SKN38 1차 프로젝트 4팀. 2025년 강수량, 지형(고도), 과거 침수 �
 
 ## 개발 환경 준비
 
-팀 저장소를 각자 포크해서 작업합니다. [팀 저장소](https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team) 오른쪽 위 **Fork** 를 눌러 내 계정에 포크를 만든 뒤, 그 포크를 받습니다.
+처음 한 번만 하면 됩니다. 그다음 git 작업(브랜치, 커밋, PR, 병합, 정리)은 에이전트(Claude Code, Codex)가 대신 합니다. 아래 「작업 올리기」를 보세요.
 
-Python 3.11 이상이 필요합니다. 저장소를 받은 폴더에서 팀 저장소를 `upstream` 으로 등록하고, 가상환경을 만들어 패키지를 설치합니다.
+1. 프로그램을 설치합니다.
+   - [Python](https://www.python.org/downloads/) 3.11 이상
+   - [Git](https://git-scm.com/downloads)
+   - [GitHub CLI](https://cli.github.com/) — 에이전트가 PR 을 만들고 병합할 때 씁니다. Windows 는 `winget install --id GitHub.cli`, macOS 는 `brew install gh` 로도 설치됩니다.
+2. 터미널에서 GitHub 에 한 번 로그인합니다. 물음에는 차례로 `GitHub.com` → `HTTPS` → Git 인증 `Yes` → `Login with a web browser` 를 고르고, 브라우저에 뜨는 화면에서 승인합니다.
 
-```bash
-git clone https://github.com/<내 GitHub 계정>/SKN38-1st-4Team.git
-cd SKN38-1st-4Team
-git remote add upstream https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
-python -m venv .venv
-```
+   ```bash
+   gh auth login
+   ```
 
-`git remote -v` 를 치면 `origin`(내 포크)과 `upstream`(팀 저장소)이 둘 다 보여야 합니다.
+3. 팀 저장소를 내 계정에 포크하고 받습니다. 이 명령 하나로 포크 만들기, 받기, 팀 저장소를 `upstream` 으로 등록하기가 모두 끝납니다. 이미 포크해서 받아 둔 폴더가 있으면 건너뜁니다.
+
+   ```bash
+   gh repo fork SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team --clone
+   cd SKN38-1st-4Team
+   ```
+
+4. 가상환경을 만들고 패키지를 설치합니다.
+
+   ```bash
+   python -m venv .venv
+   ```
 
 macOS·Linux:
 
@@ -73,6 +85,26 @@ Windows 는 `.venv\Scripts\python.exe -m analysis.build_parking_risk` 입니다.
 
 ## 작업 올리기
 
+### 에이전트에게 맡기기(기본)
+
+저장소 폴더에서 Claude Code 나 Codex 를 실행하고 「반경 선택 기능 만들어서 올려 줘」처럼 말하면 됩니다. 에이전트가 [AGENTS.md](AGENTS.md) 「git 작업」 순서대로 다음을 모두 합니다.
+
+1. 최신 코드 받기
+2. 작업 브랜치 만들기
+3. 작업과 검사
+4. 커밋, 내 포크에 올리기
+5. 팀 저장소로 PR 만들기
+6. CI 검사 확인(실패하면 고쳐서 다시 올림)
+7. 병합, 정리
+
+팀 결정(2026-11-10)에 따라 CI 검사가 통과하면 사람 확인 없이 병합합니다.
+
+- 에이전트가 명령을 실행해도 되는지 물으면 허용하세요. 같은 명령을 다시 묻지 않게 하는 선택지가 있으면 그것을 고르면 다음부터 자동으로 진행됩니다.
+- 병합 권한이 없다고 나오면 팀 저장소에 쓰기 권한이 있는 팀원에게 병합을 부탁하거나 권한을 받으세요.
+- Claude 앱·웹의 클라우드 세션은 팀 저장소에 연결되지 않아(조직에 Claude GitHub 앱이 없음) PR 생성과 병합을 못 합니다. 각자 컴퓨터에서 실행하세요.
+
+### 직접 할 때
+
 내 포크에 브랜치를 올리고 팀 저장소 main 으로 PR 을 보냅니다. 팀 저장소 main 에는 직접 push 하지 않습니다.
 
 1. 팀 저장소 최신을 받아 내 main 을 맞춥니다.
@@ -83,7 +115,7 @@ Windows 는 `.venv\Scripts\python.exe -m analysis.build_parking_risk` 입니다.
    git push origin main
    ```
 
-2. 작업 브랜치를 만들어 커밋하고 내 포크에 올립니다. 브랜치 이름과 커밋 메시지 형식은 [AGENTS.md](AGENTS.md) 「git 작업 순서」를 따릅니다.
+2. 작업 브랜치를 만들어 커밋하고 내 포크에 올립니다. 브랜치 이름과 커밋 메시지 형식은 [AGENTS.md](AGENTS.md) 「git 작업」을 따릅니다.
 
    ```bash
    git switch -c <브랜치 이름>
