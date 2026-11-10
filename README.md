@@ -1,8 +1,8 @@
 # 침착 — 데이터로 확인하는 내 주변의 침수 위험 주차장
 
-SKN38 1차 프로젝트 4팀. 2025년 강수량, 지형(고도), 과거 침수 이력 자료로 서울 주차장별 **상대적인** 침수 위험도를 비교해 보여 주는 Streamlit 웹앱입니다. 실시간 침수 예측이 아닙니다.
+SKN38 1차 프로젝트 4팀. 2025년 강수량, 지형(고도), 과거 침수 이력 자료로 서울 5개 자치구(강북·강서·도봉·서대문·은평) 주차장별 **상대적인** 침수 위험도를 비교해 보여 주는 Streamlit 웹앱입니다. 실시간 침수 예측이 아닙니다.
 
-> 지금은 개발 환경과 문서만 준비된 상태이고 앱 코드는 아직 없습니다.
+> 지금은 개발 환경, 문서, 앱 입력 자료(주차장 163곳)까지 준비된 상태이고 화면 코드는 아직 없습니다.
 
 ## 문서
 
@@ -52,6 +52,16 @@ Windows(PowerShell):
 ```
 
 Windows 는 `.venv\Scripts\streamlit.exe run streamlit_app.py` 입니다.
+
+## 앱 입력 자료 다시 만들기
+
+팀 분석 결과(`data/raw/`)를 바꿨으면 앱이 읽는 `data/parking_risk.csv` 를 다시 만들어 함께 커밋합니다. 자료 설명과 계산은 [docs/risk-index.md](docs/risk-index.md) 에 있습니다.
+
+```bash
+.venv/bin/python -m analysis.build_parking_risk
+```
+
+Windows 는 `.venv\Scripts\python.exe -m analysis.build_parking_risk` 입니다.
 
 ## 검사
 
