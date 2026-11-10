@@ -16,13 +16,18 @@ SKN38 1차 프로젝트 4팀. 2025년 강수량, 지형(고도), 과거 침수 �
 
 ## 개발 환경 준비
 
-Python 3.11 이상이 필요합니다. 저장소를 받은 폴더에서 가상환경을 만들고 패키지를 설치합니다.
+팀 저장소를 각자 포크해서 작업합니다. [팀 저장소](https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team) 오른쪽 위 **Fork** 를 눌러 내 계정에 포크를 만든 뒤, 그 포크를 받습니다.
+
+Python 3.11 이상이 필요합니다. 저장소를 받은 폴더에서 팀 저장소를 `upstream` 으로 등록하고, 가상환경을 만들어 패키지를 설치합니다.
 
 ```bash
-git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
+git clone https://github.com/<내 GitHub 계정>/SKN38-1st-4Team.git
 cd SKN38-1st-4Team
+git remote add upstream https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
 python -m venv .venv
 ```
+
+`git remote -v` 를 치면 `origin`(내 포크)과 `upstream`(팀 저장소)이 둘 다 보여야 합니다.
 
 macOS·Linux:
 
@@ -50,7 +55,7 @@ Windows 는 `.venv\Scripts\streamlit.exe run streamlit_app.py` 입니다.
 
 ## 검사
 
-코드 검사(ruff)와 테스트(pytest)를 돌립니다. 테스트는 `tests/` 폴더에 `test_*.py` 로 둡니다. PR 을 올리면 GitHub Actions 가 같은 검사를 돌립니다.
+코드 검사(ruff)와 테스트(pytest)를 돌립니다. 테스트는 `tests/` 폴더에 `test_*.py` 로 둡니다. 팀 저장소로 PR 을 보내면 팀 저장소의 GitHub Actions 가 같은 검사를 돌립니다(포크의 Actions 는 켜지 않아도 됩니다). 검사가 승인 대기로 멈춰 있으면 팀 저장소 관리자가 PR 화면에서 승인합니다.
 
 ```bash
 .venv/bin/python -m ruff check . && .venv/bin/python -m ruff format --check . && .venv/bin/python -m pytest
@@ -58,16 +63,34 @@ Windows 는 `.venv\Scripts\streamlit.exe run streamlit_app.py` 입니다.
 
 ## 작업 올리기
 
-main 에 바로 올리지 않고 브랜치를 만들어 PR 로 올립니다.
+내 포크에 브랜치를 올리고 팀 저장소 main 으로 PR 을 보냅니다. 팀 저장소 main 에는 직접 push 하지 않습니다.
 
-```bash
-git switch main && git pull
-git switch -c <브랜치 이름>
-git add <파일> && git commit -m "<무엇을 바꿨는지>"
-git push -u origin <브랜치 이름>
-```
+1. 팀 저장소 최신을 받아 내 main 을 맞춥니다.
 
-GitHub 에서 PR 을 만들고, 검사가 초록이면 합칩니다.
+   ```bash
+   git switch main
+   git pull --ff-only upstream main
+   git push origin main
+   ```
+
+2. 작업 브랜치를 만들어 커밋하고 내 포크에 올립니다. 브랜치 이름과 커밋 메시지 형식은 [AGENTS.md](AGENTS.md) 「git 작업 순서」를 따릅니다.
+
+   ```bash
+   git switch -c <브랜치 이름>
+   git add <파일> && git commit -m "<무엇을 바꿨는지>"
+   git push -u origin <브랜치 이름>
+   ```
+
+3. GitHub 의 내 포크 화면에 뜨는 **Compare & pull request** 를 누릅니다. base 가 `SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team` 의 `main` 인지 확인하고 PR 을 만듭니다.
+4. 검사가 초록이면 squash 병합합니다.
+5. 병합된 뒤 PR 화면의 **Delete branch** 로 포크의 브랜치를 지우고, 내 컴퓨터에서도 지운 다음 1번으로 돌아갑니다. squash 병합은 커밋이 새로 만들어지므로 `-d` 로는 지워지지 않아 `-D` 를 씁니다.
+
+   ```bash
+   git switch main
+   git branch -D <브랜치 이름>
+   ```
+
+내 포크의 main 에서는 커밋하지 않습니다. 그래야 1번의 `git pull --ff-only upstream main` 이 언제나 충돌 없이 됩니다.
 
 ## 저장소에 올리지 않는 것
 
