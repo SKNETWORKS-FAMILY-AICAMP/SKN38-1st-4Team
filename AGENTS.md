@@ -114,17 +114,74 @@ Windows(PowerShell)는 한 줄씩 실행합니다.
 
 화면을 바꿨으면 `streamlit run streamlit_app.py` 로 직접 열어 바뀐 화면을 눈으로 확인합니다.
 
-## git 작업 순서
+## git 작업 — 에이전트가 끝까지 대신 합니다
 
-팀 저장소(`SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team`)를 각자 포크해서 작업합니다. 리모트는 둘입니다: `origin` 은 내 포크, `upstream` 은 팀 저장소. `upstream` 이 없으면 `git remote add upstream https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git` 로 더합니다.
+팀원 대부분이 git 에 익숙하지 않습니다. 사용자는 「반경 선택 기능 만들어서 올려 줘」처럼 말하기만 하고, 에이전트는 아래 순서를 **처음부터 병합 뒤 정리까지 직접 실행**합니다. 사용자에게 git 명령을 치라고 하지 않고, 끝나면 무엇이 바뀌었는지와 PR 링크를 쉬운 말로 알립니다. 팀 결정(2026-11-10): CI 검사가 통과하면 사람 확인 없이 병합합니다.
 
-1. `git switch main && git pull --ff-only upstream main && git push origin main` 으로 팀 저장소 최신을 받아 내 포크 main 을 맞추고, 작업 브랜치를 만듭니다: `git switch -c <종류>/<내용>` (예: `feat/explore-map`).
-2. 한 브랜치에는 한 가지 일만 합니다. 관계없는 파일은 고치지 않습니다.
-3. 올릴 파일만 골라 `git add` 하고, 커밋 전에 `git status` 로 확인합니다.
-4. 커밋 메시지는 Conventional Commits 형식에 한국어 제목을 씁니다: `<종류>(<범위>): <요약>`. 종류는 feat, fix, docs, refactor, test, chore. 예: `feat(탐색): 반경 선택과 거리순 목록`
-5. `git push -u origin <브랜치>` 로 내 포크에 올리고, 팀 저장소 `main` 을 base 로 PR 을 만듭니다. PR 본문은 문제 → 해결 → 영향 → 검증을 한 줄씩 씁니다.
-6. 팀 저장소의 GitHub Actions 검사가 초록이면 squash 병합하고, 1번으로 돌아가 main 을 다시 맞춥니다. 팀 저장소 main 에 직접 push 하지 않고 force push 하지 않습니다. 내 포크 main 에서는 커밋하지 않고 팀 저장소 main 을 따라가게만 둡니다.
-7. `.venv`, 비밀값, 100MB 넘는 파일(GitHub 가 거부함)은 올리지 않습니다.
+GitHub 작업은 GitHub CLI(`gh`)로 합니다. 팀 저장소를 각자 포크해서 작업하며, 리모트는 `origin` 이 내 포크, `upstream` 이 팀 저장소입니다. 아래에서 `TEAM` 은 `SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team`, `<me>` 는 `gh api user --jq .login` 으로 얻은 내 GitHub 아이디입니다.
+
+### 0. 준비 확인(처음, 또는 명령이 실패할 때)
+
+- `gh auth status` 로 로그인을 확인합니다. 안 되어 있으면 사용자에게 터미널에서 `gh auth login` 을 한 번 실행해 달라고 부탁합니다. 브라우저 로그인이라 에이전트가 대신할 수 없고, 사용자가 직접 할 일은 이것뿐입니다.
+- 저장소를 아직 받지 않았으면 `gh repo fork TEAM --clone` 으로 포크 만들기, 받기, `upstream` 등록을 한 번에 합니다.
+- `git remote -v` 에 `upstream` 이 없으면 `git remote add upstream https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git` 로 더합니다.
+
+### 1. 시작: 최신 받기와 브랜치
+
+```bash
+git switch main
+git pull --ff-only upstream main
+git push origin main
+git switch -c <종류>/<내용>        # 예: feat/explore-map
+```
+
+- 커밋하지 않은 변경이 남아 있으면 버리지 말고 무엇인지 사용자에게 알린 뒤 정합니다.
+- 내 포크 main 에서는 커밋하지 않고 팀 저장소 main 을 따라가게만 둡니다.
+
+### 2. 작업, 검사, 커밋, 올리기
+
+- 한 브랜치에는 한 가지 일만 합니다. 관계없는 파일은 고치지 않습니다.
+- 「끝내기 전 검사」를 모두 통과시킵니다.
+- 올릴 파일만 골라 `git add` 하고, 커밋 전에 `git status` 로 확인합니다.
+- 커밋 메시지는 Conventional Commits 형식에 한국어 제목을 씁니다: `<종류>(<범위>): <요약>`. 종류는 feat, fix, docs, refactor, test, chore. 예: `feat(탐색): 반경 선택과 거리순 목록`
+- `git push -u origin <브랜치>` 로 내 포크에 올립니다.
+
+### 3. PR 만들기
+
+```bash
+gh pr create --repo TEAM --base main --head <me>:<브랜치> --title "<커밋 제목 형식>" --body-file <본문 파일>
+```
+
+- 본문은 문제 → 해결 → 영향 → 검증을 한 줄씩 한국어로 씁니다. 따옴표와 한글이 깨지지 않게 저장소 밖 임시 파일에 써서 `--body-file` 로 넘깁니다.
+- 문서에 「팀 확인 필요」로 적힌 것을 건드렸으면 본문에 제안으로 적습니다.
+
+### 4. CI 확인과 병합
+
+```bash
+gh pr checks <PR 번호> --repo TEAM --watch
+gh pr merge <PR 번호> --repo TEAM --squash
+```
+
+- 검사가 아직 잡히지 않았다고 나오면 잠시 뒤 다시 확인합니다.
+- 검사가 실패하면 `gh run view <실행 번호> --repo TEAM --log-failed` 로 원인을 보고 고쳐 같은 브랜치에 다시 push 합니다. 같은 PR 에 반영됩니다.
+- 충돌이 나면 `git fetch upstream && git merge upstream/main` 으로 브랜치에 합쳐 해결하고, 검사를 다시 통과시킨 뒤 push 합니다. force push 를 하지 않으므로 rebase 대신 merge 를 씁니다.
+- 검사가 「승인 대기」로 멈추거나 병합 권한이 없다고 나오면 멈추고, 팀 저장소 관리자(쓰기 권한이 있는 팀원)에게 승인·병합을 부탁하라고 사용자에게 알립니다.
+
+### 5. 마무리
+
+```bash
+git switch main
+git pull --ff-only upstream main
+git push origin main
+git branch -D <브랜치>              # squash 병합이라 -d 로는 지워지지 않음
+git push origin --delete <브랜치>
+```
+
+### 하지 않는 것
+
+- 팀 저장소 main 에 직접 push, force push(`--force`), `git reset --hard`, 사용자가 만든 변경 버리기
+- 검사가 실패한 PR 병합, 검사를 끄거나 테스트를 건너뛰어 통과시키기
+- `.venv`, 비밀값, 100MB 넘는 파일(GitHub 가 거부함) 올리기
 
 ## 모르는 것은 지어내지 않기
 
