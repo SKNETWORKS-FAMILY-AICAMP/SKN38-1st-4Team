@@ -23,7 +23,7 @@
 
 ## 📌 목차
 
-- [팀 소개](#-팀-소개)
+- - [팀 소개](#-팀-소개)
 - [프로젝트 개요](#-프로젝트-개요)
 - [서비스 차별점](#-서비스-차별점)
 - [주요 기능](#-주요-기능)
@@ -33,11 +33,11 @@
 - [침수 위험지수 산정](#-침수-위험지수-산정)
 - [시스템 구성](#-시스템-구성)
 - [기술 스택](#-기술-스택)
+- [데이터베이스 설계 (ERD)](#-데이터베이스-설계-erd)
 - [프로젝트 구조](#-프로젝트-구조)
 - [실행 방법](#-실행-방법)
 - [분석의 한계](#-분석의-한계)
 - [향후 계획](#-향후-계획)
-
 ---
 
 ## 👥 팀 소개
@@ -47,22 +47,22 @@
     <td align="center" width="25%" valign="top">
       <img src="assets/damin.png" width="140" alt="이다민"><br>
       <strong>이다민</strong><br>
-      <sub><span style="font-weight: 400;">Project Lead<br>Data Engineering</span></sub>
+      <sub><strong>Project Lead<br>Data Engineering</strong></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/doyeon.png" width="140" alt="황도연"><br>
       <strong>황도연</strong><br>
-      <sub><span style="font-weight: 400;">Data Analysis<br>Service Planning</span></sub>
+      <sub><strong>Data Analysis<br>Service Planning</strong></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/jungwook.png" width="140" alt="박정욱"><br>
       <strong>박정욱</strong><br>
-      <sub><span style="font-weight: 400;">Frontend Development<br>Data Processing</span></sub>
+      <sub><strong>Frontend Development<br>Data Processing</strong></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/eungyu.png" width="140" alt="백은규"><br>
       <strong>백은규</strong><br>
-      <sub><span style="font-weight: 400;">UI/UX Design<br>Map Integration</span></sub>
+      <sub><strong>UI/UX Design<br>Map Integration</strong></sub>
     </td>
   </tr>
   <tr>
@@ -98,7 +98,6 @@
     </td>
   </tr>
 </table>
-
 
 ## 💡 프로젝트 개요
 
@@ -296,6 +295,18 @@
 | Haversine | 주차장 ↔ 과거 침수구역 대표 좌표 간 지표면 최단거리 계산 |
 | 상대 고도 비교 | 주차장 고도 ↔ 반경 300m 고도 중앙값 비교 |
 | 가중합 | 강수·저지대·침수 이력 점수 통합 |
+
+
+## 🗄️ 데이터베이스 설계 (ERD)
+
+<div align="center">
+  <img src="assets/erd.png" width="90%" alt="침착 ERD">
+  <br>
+  <sub>침착(CHIMCHAK) 데이터베이스 ERD</sub>
+</div>
+
+침착은 MySQL 기반의 관계형 데이터베이스를 활용하며,
+총 **7개 테이블**로 구성되어 있습니다.
 
 
 ## 📂 프로젝트 구조
