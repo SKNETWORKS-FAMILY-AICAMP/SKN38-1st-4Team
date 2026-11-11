@@ -248,15 +248,26 @@
 
 ## 📂 프로젝트 구조
 
-실제 GitHub 저장소의 폴더 구조를 확인한 후 여기에 트리를 추가해 주세요. **아래는 구성 예시이며 실제 파일 구조를 의미하지 않습니다.**
-
 ```text
-REPOSITORY/
-├── app.py                # Streamlit 진입 파일 (예시)
-├── data/                 # 데이터 파일 (예시)
-├── assets/               # 로고·서비스 화면 (예시)
-├── docs/                 # ERD·분석 설명 (예시)
-├── requirements.txt      # Python 의존성 (예시)
+project/
+├── app.py
+├── launch.py
+├── pages/
+│   ├── 0_Home.py
+│   ├── 1_FAQ.py
+│   └── 2_Analysis_Results.py
+├── services/
+├── scripts/
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── risk_config.json
+├── sql/
+├── tests/
+├── docs/
+├── assets/
+├── .streamlit/
+├── requirements.txt
 └── README.md
 ```
 
