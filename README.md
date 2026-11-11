@@ -296,17 +296,21 @@
 | 상대 고도 비교 | 주차장 고도 ↔ 반경 300m 고도 중앙값 비교 |
 | 가중합 | 강수·저지대·침수 이력 점수 통합 |
 
-
 ## 🗄️ 데이터베이스 설계 (ERD)
+
+ERD는 **7개 테이블**과 **4개의 외래 키(FK) 관계**로 구성되어 있습니다.
 
 <div align="center">
   <img src="assets/erd.png" width="90%" alt="침착 ERD">
-  <br>
-  <sub>침착(CHIMCHAK) 데이터베이스 ERD</sub>
 </div>
 
-침착은 MySQL 기반의 관계형 데이터베이스를 활용하며,
-총 **7개 테이블**과 **4개의 외래 키(FK) 관계**로 구성되어 있습니다.
+| 분류 | 테이블 |
+|---|---|
+| 기본정보 | PARKING_LOT, FLOOD_AREA |
+| 위험요인 분석 | RAINFALL_RISK, PARKING_LOWLAND |
+| 관계 및 거리 분석 | PARKING_FLOOD_DISTANCE |
+| 최종 분석 결과 | PARKING_RISK_RESULT |
+| 서비스 지원 | FAQ |
 
 ## 📂 프로젝트 구조
 
