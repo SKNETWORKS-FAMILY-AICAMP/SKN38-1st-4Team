@@ -273,12 +273,11 @@ project/
 
 ## 🚀 실행 방법
 
-> 아래 실행 절차는 **일반적인 Python/Streamlit 프로젝트 예시**입니다. 실제 저장소의 실행 파일명과 패키지 구성을 확인한 후 확정해 주세요.
-
 ```bash
 # 저장소 복제 (실제 주소로 변경)
 git https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
 cd SKN38-1st-4Team
+```
 
 **1. 가상환경 생성 및 활성화**
 
