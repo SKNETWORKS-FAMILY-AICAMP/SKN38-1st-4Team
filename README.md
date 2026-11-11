@@ -42,48 +42,63 @@
 
 ## 👥 팀 소개
 
-<table>
+<table width="100%">
   <tr>
-    <td align="center" width="25%">
-      <img src="assets/damin.png" width="160"><br>
-      <b>이다민</b><br>
-      <b>Project Lead · Data Engineering</b>
-      <hr>
-      프로젝트 총괄 및 서비스 기획 주도<br>
-      ERD 설계 및 데이터베이스 구축·적재<br>
-      데이터 정제·정규화 및 전처리
+    <td align="center" width="25%" valign="top">
+      <img src="assets/damin.png" width="140" alt="이다민"><br>
+      <strong>이다민</strong><br>
+      <sub>Project Lead<br>Data Engineering</sub>
     </td>
-    <td align="center" width="25%">
-      <img src="assets/doyeon.png" width="160"><br>
-      <b>황도연</b><br>
-      <b>Data Analysis · Service Planning</b>
-      <hr>
-      강수량 데이터 조사·수집<br>
-      데이터 간 연관성 분석 및 전처리 로직 설계<br>
-      시장 조사 및 문제 정의<br>
-      프로젝트 발표 및 서비스 시연
+    <td align="center" width="25%" valign="top">
+      <img src="assets/doyeon.png" width="140" alt="황도연"><br>
+      <strong>황도연</strong><br>
+      <sub>Data Analysis<br>Service Planning</sub>
     </td>
-    <td align="center" width="25%">
-      <img src="assets/jungwook.png" width="160"><br>
-      <b>박정욱</b><br>
-      <b>Frontend Development · Data Processing</b>
-      <hr>
-      프론트엔드 기능 개발<br>
-      Git/GitHub 저장소 관리<br>
-      지형·고도 데이터 조사·수집<br>
-      데이터 정제·정규화 및 전처리
+    <td align="center" width="25%" valign="top">
+      <img src="assets/jungwook.png" width="140" alt="박정욱"><br>
+      <strong>박정욱</strong><br>
+      <sub>Frontend Development<br>Data Processing</sub>
     </td>
-    <td align="center" width="25%">
-      <img src="assets/eungyu.png" width="160"><br>
-      <b>백은규</b><br>
-      <b>UI/UX Design · Map Integration</b>
-      <hr>
-      서비스 기능 테스트 및 품질 검증(QA)<br>
-      프론트엔드 UI 디자인<br>
-      침수흔적도 데이터 조사·수집 및 전처리
+    <td align="center" width="25%" valign="top">
+      <img src="assets/eungyu.png" width="140" alt="백은규"><br>
+      <strong>백은규</strong><br>
+      <sub>UI/UX Design<br>Map Integration</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="25%" valign="top">
+      <sub>
+        • 프로젝트 총괄 및 서비스 기획 주도<br>
+        • ERD 설계 및 DB 구축·적재<br>
+        • 데이터 정제·정규화 및 전처리
+      </sub>
+    </td>
+    <td width="25%" valign="top">
+      <sub>
+        • 강수량 데이터 조사·수집<br>
+        • 데이터 연관성 분석 및 전처리 로직 설계<br>
+        • 시장 조사 및 문제 정의<br>
+        • 프로젝트 발표 및 서비스 시연
+      </sub>
+    </td>
+    <td width="25%" valign="top">
+      <sub>
+        • 프론트엔드 기능 개발<br>
+        • Git/GitHub 저장소 관리<br>
+        • 지형·고도 데이터 조사·수집<br>
+        • 데이터 정제·정규화 및 전처리
+      </sub>
+    </td>
+    <td width="25%" valign="top">
+      <sub>
+        • 서비스 기능 테스트 및 품질 검증(QA)<br>
+        • 프론트엔드 UI 디자인<br>
+        • 침수흔적도 데이터 조사·수집 및 전처리
+      </sub>
     </td>
   </tr>
 </table>
+
 
 
 ## 💡 프로젝트 개요
