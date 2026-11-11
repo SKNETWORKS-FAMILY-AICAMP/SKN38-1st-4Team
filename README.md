@@ -277,20 +277,34 @@ project/
 
 ```bash
 # 저장소 복제 (실제 주소로 변경)
-git clone https://github.com/OWNER/REPOSITORY.git
-cd REPOSITORY
+git https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
+cd SKN38-1st-4Team
 
-# 가상환경 생성 및 활성화 (Windows PowerShell)
+**1. 가상환경 생성 및 활성화**
+
+```bash
 python -m venv .venv
-.venv\Scripts\Activate.ps1
 
-# 의존성 설치 (requirements.txt가 있는 경우)
+# Windows
+.venv\Scripts\activate
+
+# Mac / Linux
+source .venv/bin/activate
+```
+
+**2. 라이브러리 설치**
+
+```bash
 pip install -r requirements.txt
+```
 
-# Streamlit 실행 (진입 파일이 app.py인 경우)
+**3. Streamlit 실행**
+
+```bash
 streamlit run app.py
 ```
 
+Windows에서는 `실행.bat`을 통해서도 실행할 수 있습니다.
 배포 플랫폼에서 요구하는 환경변수나 비밀키가 있다면 공개 저장소에 업로드하지 말고 배포 서비스의 Secrets/환경변수 설정을 사용하세요.
 
 ### API 키 관리
