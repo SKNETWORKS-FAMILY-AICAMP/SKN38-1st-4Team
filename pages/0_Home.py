@@ -4,6 +4,7 @@ from math import atan2, cos, radians, sin, sqrt
 import pandas as pd
 import streamlit as st
 
+from services.kakao_navi_view import route_panel
 from services.parking_data import service_inventory
 from services.parking_map import PREVIEW_LOCATION, render_map
 from services.parking_marker import RISK_BANDS, marker_icon, marker_svg, risk_band
@@ -24,8 +25,6 @@ def badge(value):
     text = risk_band(value)[1]
     st.badge(text, color="blue")
 
-
-# Kakao navigation is temporarily disabled; implementation is in services/kakao_navi_view.py.
 
 def detail(row):
     st.subheader(row["name"])
@@ -180,7 +179,9 @@ if mode == "주변 주차장 검색":
             if st.button("상세 닫기", key="close_detail"):
                 st.session_state["selected_id"] = None
                 st.rerun()
-            detail(frame.loc[frame["id"] == selected_id].iloc[0])
+            selected_row = frame.loc[frame["id"] == selected_id].iloc[0]
+            detail(selected_row)
+            route_panel(selected_row, lat, lon)
 else:
     st.subheader("주차장, 나란히 살펴보세요.")
     st.caption("검색 조건이 달라져도 비교함은 유지됩니다. 아래에서 항목을 추가하거나 제외하세요.")

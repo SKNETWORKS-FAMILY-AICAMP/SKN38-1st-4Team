@@ -1,4 +1,4 @@
-"""Inactive Kakao directions panel, retained for later restoration."""
+"""Kakao directions panel shown under the selected parking detail on the home map."""
 import streamlit as st
 import pydeck as pdk
 
@@ -7,7 +7,7 @@ def route_panel(row, lat, lon):
     from services.kakao_navi import directions, DirectionsError
     identifier = int(row["id"])
     st.markdown("#### 카카오 자동차 길찾기")
-    st.caption("출발지: 강남역 · 목적지: 선택한 예시 좌표")
+    st.caption("출발지: 기준 위치(현재 위치 또는 선택한 기준 장소) · 목적지: 선택한 주차장")
     priorities = {"추천 경로": "RECOMMEND", "최단 시간": "TIME", "최단 거리": "DISTANCE"}
     choice = st.selectbox("경로 옵션", list(priorities), key=f"route_option_{identifier}")
     signature = (float(lon), float(lat), float(row["lon"]), float(row["lat"]), priorities[choice])

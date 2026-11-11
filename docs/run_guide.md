@@ -42,7 +42,7 @@ Windows에서는 기존처럼 `실행.bat`을 더블클릭해도 됩니다. VS C
 | 핀 클릭 시 정보창 | 핀에 마우스를 올리면 툴팁, 클릭하면 상세 패널 |
 | `assets/design.css`, `style.css` 스타일 | `.streamlit/config.toml` 테마 색상 |
 
-카카오 길찾기(`services/kakao_navi_view.py`, `services/kakao_navi.py`)는 원본처럼 화면에서 비활성 상태로 보관했습니다. API 키 설정 방법은 아래를 따릅니다.
+카카오 자동차 길찾기(`services/kakao_navi_view.py`, `services/kakao_navi.py`)는 지도에서 주차장을 골라 연 상세 패널 아래에 표시됩니다. 출발지는 기준 위치(현재 위치 또는 선택한 기준 장소), 목적지는 선택한 주차장입니다. API 키 설정 방법은 아래를 따릅니다.
 
 ## API 키 설정 (.env)
 
@@ -54,7 +54,7 @@ KAKAO_REST_API_KEY=발급받은_REST_API_키
 
 `services/api_config.py`가 실행 폴더와 관계없이 루트 `.env`를 읽고, `services/kakao_navi.py`가 이 값으로 카카오 자동차 길찾기 요청을 인증합니다. 같은 이름의 운영 환경 변수가 있으면 그 값이 우선합니다. 파일 값은 API 요청 시 다시 읽으며, 키가 비어 있으면 외부 호출 없이 설정 안내를 표시합니다.
 
-기존 환경에서는 `pip install -r requirements.txt`로 추가된 `python-dotenv`를 설치하고 앱을 다시 실행합니다. Windows의 `실행.bat`도 이 의존성을 확인·설치합니다. 키 설정만으로 비활성 길찾기 패널이 화면에 추가되지는 않습니다.
+기존 환경에서는 `pip install -r requirements.txt`로 추가된 `python-dotenv`를 설치하고 앱을 다시 실행합니다. Windows의 `실행.bat`도 이 의존성을 확인·설치합니다. 키는 ‘자동차 경로 조회’를 누를 때마다 다시 읽으므로, 의존성이 설치된 상태라면 키만 바꿀 때는 앱을 다시 실행하지 않아도 됩니다.
 
 `.env`와 그 사본은 `.gitignore`에서 제외합니다. GitHub 웹 업로드 시에는 `.gitignore`가 파일 선택을 막아 주지 않으므로 직접 제외하세요. 다른 PC에서는 루트에 위 형식의 `.env`를 만들어 사용합니다.
 

@@ -46,6 +46,28 @@ class AppNavigationTests(unittest.TestCase):
             self.assertEqual(len(screen.metric), 2)
             self.assertTrue(all("미산정" not in metric.value for metric in screen.metric))
 
+    def test_selected_parking_detail_shows_kakao_route_panel(self):
+        app = Path(__file__).resolve().parents[1] / "app.py"
+        target = service_inventory().iloc[0]
+        screen = AppTest.from_file(str(app)).run()
+        screen.session_state["parking_scope"] = "전체 지역"
+        screen.session_state["parking_district"] = "전체 지역"
+        screen.session_state["selected_id"] = int(target["id"])
+        route ={"distance": 2120.0, "duration": 360.0, "toll": None,
+                 "paths": [{"path": [[127.0, 37.6], [127.01, 37.61]]}]}
+        with patch("services.kakao_navi.directions", return_value=route) as request:
+            screen.run()
+            self.assertFalse(screen.exception)
+            self.assertIn("#### 카카오 자동차 길찾기", [item.value for item in screen.markdown])
+            screen.button(key=f'route_button_{int(target["id"])}').click().run()
+            self.assertFalse(screen.exception)
+        origin, destination, priority = request.call_args.args
+        self.assertEqual(destination, (float(target["lon"]), float(target["lat"])))
+        self.assertEqual(priority, "RECOMMEND")
+        metrics = {metric.label: metric.value for metric in screen.metric}
+        self.assertEqual(metrics["자동차 이동 거리"], "2.12 km")
+        self.assertEqual(metrics["예상 소요 시간"], "6분")
+
     def test_home_faq_and_analysis(self):
         app = Path(__file__).resolve().parents[1] / "app.py"
         screen = AppTest.from_file(str(app)).run()

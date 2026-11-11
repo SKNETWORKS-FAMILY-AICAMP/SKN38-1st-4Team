@@ -18,7 +18,8 @@
 
 - [x] api-env — 루트 `.env` 생성·카카오 길찾기 클라이언트 인증 연결. 키가 없으면 HTTP 미호출, 운영 환경 변수 우선. 의존성·배치 검사·문서 갱신, 전체 테스트 37개 통과. 근거 `.handoff/api-env.md` (2026-11-11)
 - [x] scored-service-only — 산정된 137개만 서비스 개수·검색·목록·지도·비교·분석에 포함. 미산정 안내 제거, 이전 세션 선택 초기화. 전체 38개 테스트 통과. 근거 `.handoff/scored-service-only.md` (2026-11-11)
-- [ ] remote-history-integration — 로컬 b623d67에서 최신 원격 da6377f 병합 충돌 24개 내용 해결·38개 테스트 통과. 최신 원격 README·이미지 4개와 기존 앱 기능 보존, 동일한 루트 CSV 제거. 사용자 스테이징·병합 커밋·push 대기. 근거 `.handoff/merge-current/report.md` (2026-11-11)
+- [x] remote-history-integration — 충돌 24개 해결·38개 테스트 통과 후 사용자 병합 커밋·push 완료. GitHub API로 main=186ecb7, 부모 b623d67·da6377f 확인. 최신 원격 README·이미지 4개·기존 앱 기능 보존, 루트 중복 CSV 제거. 근거 `.handoff/merge-current/report.md` (2026-11-11)
+- [x] kakao-route-panel — 사용자가 `.env`에 키 입력(2026-11-11). 실서버 인증 성공(강남역→선릉역 2.12km). 홈 지도 상세 패널 아래 `route_panel` 연결, 출발지 문구를 기준 위치로 정정, 문서 3개 갱신. 테스트 39개 통과, 실제 키 AppTest 클릭 29.19km·49분, verify-app 흐름 통과 (2026-11-11)
 
 ## 지켜야 할 제약
 - (2026-11-11) "python라이브러리에서 GPS 라이브러리 이용해서 현재위치 기능 추가해줘."
@@ -28,28 +29,28 @@
 - (2026-11-11) 사용자 지시: Codex는 Git 명령을 직접 실행하지 않는다.
 
 ## 인계
-- 갱신: 2026-11-11 12:14 (병합 충돌 내용 해결·사용자 Git 등록 대기)
-- 상태(remote-history-integration): 로컬 b623d67 + 원격 da6377f 병합 진행 중. 충돌 24개 내용 해결. 최신 원격 README·이미지 4개 보존, 실행 안내 추가·앱 기능 유지, 동일한 루트 CSV 제거. `.handoff/merge-current/report.md:1`.
-- 다음 행동: 사용자 `git add -u` → `git diff --name-only --diff-filter=U` 출력 없음 확인 → `git commit -m "원격 main 병합 및 로컬 기능 유지"` → `git push origin main`. 실행 결과로 병합·업로드 완료 확인.
-- 마지막 검증: 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK(1.641초). 충돌 표시 52파일 없음, Python 31개 구문 OK. 해결 24개·이미지 4개 해시와 최신 원격 README 보존·CSV 동일성 확인. `.handoff/merge-current/report.md:17`.
-- 커밋 안 된 파일: 충돌 24개(내용 해결·인덱스 미해결) + TASKS.md 갱신, 원격 이미지 4개 추가(staged)·루트 중복 CSV 삭제(등록 대기). 경로·해시 `.handoff/merge-current/resolution.json`. `.env` 유지.
+- 갱신: 2026-11-11 (카카오 길찾기 패널 활성화·실서버 인증 확인, Claude 로컬 커밋)
+- 상태(remote-history-integration): 완료. 로컬 main·origin/main·GitHub main=186ecb7c0f081a98874b39c57aead40cef870b67. 부모 b623d67·da6377f. MERGE_HEAD·index.lock·Vim 임시 파일 없음. `.handoff/merge-current/report.md:1`.
+- 다음 행동: 사용자가 실행 중인 앱을 재실행해 상세 패널의 ‘자동차 경로 조회’ 확인. kakao-route-panel 로컬 커밋은 push 전(원격 반영은 사용자 결정). rainfall-all-districts는 기존 사용자 결정대로 보류.
+- 마지막 검증: 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 39 OK(1.919초). verify-app 흐름 `.handoff/verify_route_panel.mjs`(실행 시 tests/로 옮겨야 복사됨) 통과, 지도 배경만 인터넷 차단.
+- 커밋 안 된 파일: 없음(kakao-route-panel 커밋에 이전 TASKS.md 기록 포함). `.env`·`.handoff/`는 제외 유지.
 - Git 제약: Codex는 모든 Git 명령·인덱스 쓰기를 실행하지 않는다. 사용자가 스테이징·커밋·push를 진행한다.
 - 복구: 실제 충돌 원본·양쪽 버전 `.handoff/merge-current/`, 이전 원본·준비본 `.handoff/merge-latest/`. 이전 인계 전문 `.handoff/merge-current/previous-handoff.md`. `.handoff/`는 업로드 제외. 이전 준비본으로 최신 README를 덮지 않는다.
 - 서비스 기준: `services/parking_data.py:34`에서 5개 구 + score.notna() 필터. 점수 CSV 137곳만 지도·검색·비교·분석에 표시. 버전 scored-service-v5. 전체 데이터 806곳 중 669곳 점수 NULL 유지. `.handoff/scored-service-only.md`.
 - 점수 경로: `data/raw/parking_risk_result_recalculated.csv`만 유지. 루트 중복 제거 전후 SHA-256 d30304771fa6364ce1b961d7bb771fec69505c2a8978cee86f081b34542d4934 동일. 위험점수 137개는 정수 21~80.
 - FAQ: `sql/Table07_faq.sql` 원본 27개·4개 분류, `services/faq.py:7`에서 읽음. 덤프·조회 SQL 동기화. FAQ024의 원문 164곳과 현재 137곳 차이는 제공 문구 유지. `.handoff/faq-categories.md`.
-- API 다음 행동: 사용자 키 입력·의존성 설치 후 앱 재실행. `services/api_config.py:10`이 루트 .env를 읽으며 운영 환경 변수 우선. 길찾기 패널은 비활성이라 키만 넣어도 표시되지 않는다. 실서버 인증 미검증. `.handoff/api-env.md`.
+- API: 키 입력됨(32자 REST 키, 값 미출력). `services/api_config.py:10`이 조회 때마다 루트 .env를 다시 읽고 운영 환경 변수 우선. 길찾기 패널 `pages/0_Home.py:184` 활성, 출발지=기준 위치. 실서버 인증 성공. `.handoff/api-env.md`.
 - 구조 정리: `app.py` 실행, `docs/restructure/target_map.md` 4단계 완료. 상단 이동 전 테스트 명령 대신 현재 discover 명령 사용. Windows 배치·이번 실제 MySQL 적재·브라우저 시각 검증은 미실행.
 - rainfall-all-districts 보류: 사용자 5개 구 우선 선택. 확대 시 AWS 23지점 + ASOS 108의 2025 시간 강수량을 data/raw/kma_hourly/에 확보 → `python scripts/build_rainfall.py --check-only`. 최종 점수 CSV는 별도 확보.
 - 한도 대비: 사용자 지시로 만든 `.handoff/codex_fallback.py`와 `.handoff/sessions.json` 설명은 「결정」 참조. 설정·감시기 생존은 이번 확인하지 않음.
-- 미결정: 없음. 병합 커밋·원격 업로드는 아직 미완료.
+- 미결정: 없음. 병합 커밋·원격 업로드 완료.
 
 ## 사용자 단계
 1. 켜져 있는 앱(localhost:8501, 08:52 시작)을 끄고 다시 켠다 — 이전 코드를 메모리에 들고 있어 GPS 버튼이 안 보인다.
 2. 실제 브라우저에서 ‘◎ 현재 위치’ → ‘GPS로 내 위치 찾기’ → 위치 ‘허용’. macOS 는 시스템 설정 > 개인정보 보호 및 보안 > 위치 서비스에서 브라우저도 켜져 있어야 한다.
 3. (보류 — 구를 늘릴 때만) (강수) Claude 앱 오른쪽 브라우저 창에 열린 data.kma.go.kr 에서 직접 로그인한다(회원가입 필요 시 가입). 비밀번호는 Claude 가 입력하지 않는다.
 4. (restructure 한도 대비) 터미널 패널 'codex 폴더 신뢰 1회' 탭에 뜬 Codex 화면에서 이 폴더를 신뢰(Trust)로 고른 뒤 `/quit` 으로 닫는다 — 신뢰 전에는 감시기가 띄운 Codex 가 'blocked' 로 멈춘다.
-5. (API .env) 루트 `.env`의 `KAKAO_REST_API_KEY=`에 실제 REST API 키 입력 → 앱 환경에서 `pip install -r requirements.txt` → 앱 재실행(Windows는 `실행.bat`이 의존성 확인). 실제 키·`.env` 사본은 업로드 제외. 길찾기 패널은 아직 비활성이다.
+5. (API .env) 키 입력 완료. 실행 중인 앱을 끄고 다시 켠다(화면 코드 변경 반영, 새 환경이면 먼저 `pip install -r requirements.txt`). 지도에서 주차장 ‘상세 보기’ → ‘자동차 경로 조회’. 실제 키·`.env` 사본은 업로드 제외.
 
 ## 결정
 - (2026-11-11) 한도 대비: 감시기 `.handoff/codex_fallback.py`(터미널 탭 'Codex 이어받기 감시', 60초 주기)가 등록부 `.handoff/sessions.json` 의 대본 끝이 한도 오류면 카드를 만들고 herdr-launcher 로 codex --effort high 를 띄운다. Codex 는 커밋 못 함(쓰기 범위 작업 폴더뿐) — 커밋은 메인. 2단계 세션은 시작 직후 등록부에 marker 로 추가. 멈추기: `touch .handoff/stop`.
@@ -65,6 +66,7 @@
 - 기상자료개방포털은 로그인 없이 조회하면 10줄만 보여 주고 CSV 내려받기는 로그인이 필요하다 — 1년치 시간자료는 로그인 후 CSV 로만 받는다. 시간 자료는 1회 최대 1년.
 - verify-app 은 인터넷이 없는 컨테이너라 지도 배경(basemaps.cartocdn.com) 요청이 막혀 '실패'로 나온다 — 이번 변경과 무관.
 - verify-app 기본 desktop 캡처는 Streamlit 이 그리기 전이라 빈 화면(글자 27)이다 — `--script` 흐름 파일(프로젝트 안 .mjs)로 글자를 기다린 뒤 캡처해야 한다. 시작 명령은 `--start ".venv/bin/python -m streamlit run app.py --server.port 8501 --server.headless true --server.address 0.0.0.0" --port 8501`(설치는 기본 uv).
+- verify-app 은 `.gitignore`된 폴더(`.handoff/`)의 흐름 파일을 복사하지 않고, Streamlit 은 웹소켓 때문에 `networkidle` 대기가 끝나지 않는다 — 흐름 파일은 추적 폴더에 두고 `domcontentloaded` 로 연다.
 - Altair 범례는 scale domain 에 든 값을 모두 보여 준다 — 개수에서 뺀 등급(미산정)도 domain 에서 빼야 범례에서 사라진다.
 
 ## 실측
