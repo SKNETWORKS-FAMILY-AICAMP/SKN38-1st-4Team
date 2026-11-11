@@ -10,7 +10,7 @@ from services.parking_map import PREVIEW_LOCATION, render_map
 from services.parking_marker import RISK_BANDS, marker_icon, marker_svg, risk_band
 from services.risk_model import NOTE
 from services.service_config import SERVICE_AREA, SERVICE_DISTRICTS
-from services.ui import LOGO
+from services.ui import LOGO, render_data_sources, render_reference_metrics
 
 
 def distance(lat, lon, target_lat, target_lon):
@@ -205,10 +205,6 @@ with info_col:
 with content:
     source_tab, reference_tab = st.tabs(["데이터 출처", "참고 지표"])
     with source_tab:
-        st.write("최종 위험지수는 제공된 점수 CSV의 `total_risk_score`를 주차장 관리번호로 연결합니다.")
-        st.caption("추정 위험점수가 산정된 주차장만 서비스합니다.")
+        render_data_sources()
     with reference_tab:
-        st.caption("상세 화면의 침수심·거리·강수·저지대 점수는 참고 지표입니다.")
-        st.caption("침수 파일에는 구역 경계 도형이 없어 대표좌표까지의 직선거리와 해당 좌표의 침수심을 사용한 추정 점수입니다. 미관측 지역의 침수 여부를 확정하는 값은 아닙니다.")
-        st.write("강수위험도 = 연최대1시간강수량 × 0.4 + 3시간최대강수량 × 0.4 + 집중호우발생빈도(일) × 0.2")
-        st.caption("3시간 강수량은 같은 날짜 안에서 1·2·3시, 2·3·4시처럼 연속 합산한 뒤 연간 최대값을 사용합니다. 날짜를 넘는 구간은 제외합니다. 60mm를 초과한 날은 여러 번 발생해도 하루 한 번만 셉니다. 현재 파일은 집계값이며 시간별 원자료가 없어 해당 집계 과정을 재검증하지는 못했습니다.")
+        render_reference_metrics()
