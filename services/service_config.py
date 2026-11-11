@@ -1,6 +1,6 @@
 """Service coverage: districts that have both parking records and a rainfall source row.
 
-The app keeps all parking records in those districts, including locations without a final score.
+The app shows only parking records in those districts with a final score.
 Supporting measurements and the SQL dump use the full inventory.
 """
 import csv
@@ -8,7 +8,7 @@ import re
 
 from services.data_paths import PARKING_CSV, RAINFALL_CSV
 
-PARKING_DATA_VERSION = "rainfall-districts-v4"
+PARKING_DATA_VERSION = "scored-service-v5"
 
 with PARKING_CSV.open(encoding="utf-8-sig", newline="") as source:
     PARKING_DISTRICTS = {

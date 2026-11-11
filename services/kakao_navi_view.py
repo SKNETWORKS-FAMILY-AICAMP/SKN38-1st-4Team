@@ -1,5 +1,4 @@
 """Inactive Kakao directions panel, retained for later restoration."""
-import os
 import streamlit as st
 import pydeck as pdk
 
@@ -15,16 +14,12 @@ def route_panel(row, lat, lon):
     state_key = f"route_result_{identifier}"
     if st.button("자동차 경로 조회", key=f"route_button_{identifier}", use_container_width=True):
         st.session_state.pop(state_key, None)
-        api_key = st.session_state.get("_kakao_rest_api_key", "")
-        if not api_key:
-            st.error("환경 변수 KAKAO_REST_API_KEY에 키를 입력하세요.")
-        else:
-            try:
-                with st.spinner("카카오에서 자동차 경로를 조회하고 있습니다…"):
-                    result = directions(api_key, signature[:2], signature[2:4], signature[4])
-                st.session_state[state_key] = (signature, result, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            except DirectionsError as error:
-                st.error(str(error))
+        try:
+            with st.spinner("카카오에서 자동차 경로를 조회하고 있습니다…"):
+                result = directions(signature[:2], signature[2:4], signature[4])
+            st.session_state[state_key] = (signature, result, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        except DirectionsError as error:
+            st.error(str(error))
     stored = st.session_state.get(state_key)
     if not stored or stored[0] != signature:
         return

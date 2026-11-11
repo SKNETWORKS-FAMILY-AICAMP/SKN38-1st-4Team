@@ -3,7 +3,7 @@
 Tables, column names and the file layout follow the team dump
 dump-skn_1st_4team-202611102110.sql (7 tables, mysqldump format). Values come from
 the full parking_inventory() with final scores from parking_risk_result_recalculated.csv,
-the supporting measurements and the FAQ list used by the app. Run from the project folder:
+the supporting measurements and sql/Table07_faq.sql used by the app. Run from the project folder:
 
     python scripts/build_sql_dump.py
 """
@@ -22,7 +22,7 @@ logging.getLogger("streamlit").setLevel(logging.ERROR)
 import pandas as pd  # noqa: E402
 
 from services.data_paths import FLOOD_XLSX, RAINFALL_CSV  # noqa: E402
-from services.faq import FAQ  # noqa: E402
+from services.faq import load_faq  # noqa: E402
 
 OUTPUT = ROOT / "sql" / "skn_1st_4team.sql"
 DATABASE = "skn_1st_4team"
@@ -148,7 +148,7 @@ def notes(tables):
 --     등급 구간: {bands}.
 --     risk_rank는 정수 점수의 내림차순 순위입니다(동점은 같은 순위, 산정된 {scored}곳).
 --     점수 파일에서 값을 찾을 수 없는 {unscored}행은 total_risk_score·risk_rank가 NULL, risk_grade는 '미산정'입니다.
---   faq: 팀 FAQ 27개 대신 화면(services/faq.py)의 FAQ {count["faq"]}개입니다.
+--   faq: sql/Table07_faq.sql의 FAQ {count["faq"]}개를 관리번호·카테고리·질문·답변 그대로 화면과 함께 사용합니다.
 """
 
 
@@ -182,8 +182,7 @@ def build_tables():
             "`answer` text",
             "PRIMARY KEY (`faq_id`)",
         ], [("faq_id", None), ("category", None), ("question", None), ("answer", None)],
-            [(f"FAQ{number:03d}", category, question, answer)
-             for number, (category, question, answer) in enumerate(FAQ, start=1)]),
+            load_faq()),
         Table("flood_area", [
             "`flood_id` int NOT NULL",
             "`address` varchar(150) DEFAULT NULL",

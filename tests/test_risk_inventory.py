@@ -49,12 +49,15 @@ class RiskInventoryTests(unittest.TestCase):
         self.assertTrue(missing["risk_missing_reason"].str.contains("최종 점수가 없습니다").all())
         self.assertTrue(all(risk_band(score)[1] == "미산정" for score in missing["score"]))
 
-    def test_service_keeps_unscored_parking_in_the_five_districts(self):
+    def test_service_only_includes_scored_parking_in_the_five_districts(self):
         service = service_inventory()
         self.assertEqual(SERVICE_DISTRICTS, tuple(sorted(self.audit["scored_by_district"])))
         self.assertEqual(sorted(service["district"].unique()), list(SERVICE_DISTRICTS))
-        self.assertEqual(len(service), 163)
-        self.assertEqual(int(service["score"].isna().sum()), 26)
+        self.assertEqual(len(service), 137)
+        self.assertTrue(service["score"].notna().all())
+        self.assertEqual(service.set_index("parking_code")["score"].to_dict(), self.totals)
+        unscored_ids = self.frame.loc[self.frame["score"].isna(), "id"]
+        self.assertTrue(set(service["id"]).isdisjoint(unscored_ids))
         full = self.frame.set_index("id")["score"]
         self.assertTrue(service.set_index("id")["score"].equals(full.loc[service["id"]]))
 

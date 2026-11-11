@@ -17,9 +17,7 @@ def render_brand_bar():
 
 
 def render_service_summary(frame):
-    unscored_count = int(frame["score"].isna().sum())
-    st.caption(f'서비스 지역 {len(SERVICE_DISTRICTS)}개 구({SERVICE_AREA}) · 주차장 {len(frame):,}개 · 추정 위험점수 산정 {frame["score"].notna().sum():,}개'
-               + (f" · 미산정 {unscored_count:,}개" if unscored_count else ""))
+    st.caption(f'서비스 지역 {len(SERVICE_DISTRICTS)}개 구({SERVICE_AREA}) · 추정 위험점수 산정 주차장 {len(frame):,}개')
     st.caption("강수 자료가 있는 구부터 서비스합니다. 내 주변 또는 구별 보기로 확인하세요.")
 
 

@@ -1,16 +1,21 @@
-"""Server-side Kakao Mobility directions client (stdlib only)."""
+"""Server-side Kakao Mobility directions client configured from .env."""
 import json
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+
+from services.api_config import get_kakao_rest_api_key
 
 
 class DirectionsError(Exception):
     pass
 
 
-def directions(api_key, origin, destination, priority="RECOMMEND"):
+def directions(origin, destination, priority="RECOMMEND"):
     """Coordinates use (longitude, latitude), distances meters, duration seconds."""
+    api_key = get_kakao_rest_api_key()
+    if not api_key:
+        raise DirectionsError("프로젝트 루트 .env 파일의 KAKAO_REST_API_KEY에 REST API 키를 입력하세요.")
     if priority not in {"RECOMMEND", "TIME", "DISTANCE"}:
         raise DirectionsError("지원하지 않는 경로 옵션입니다.")
     for longitude, latitude in (origin, destination):

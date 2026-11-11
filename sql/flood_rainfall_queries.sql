@@ -16,7 +16,7 @@ SET NAMES utf8mb4;
 SET @skn_check = IF(
     (SELECT NUMERIC_SCALE FROM information_schema.columns WHERE table_schema = DATABASE()
        AND table_name = 'parking_risk_result' AND column_name = 'total_risk_score') = 0
-    AND (SELECT COUNT(*) FROM faq) = 5 AND (SELECT COUNT(*) FROM flood_area) = 1132
+    AND (SELECT COUNT(*) FROM faq) = 27 AND (SELECT COUNT(*) FROM flood_area) = 1132
     AND (SELECT COUNT(*) FROM parking_flood_distance) = 806 AND (SELECT COUNT(*) FROM parking_lot) = 806
     AND (SELECT COUNT(*) FROM parking_lowland) = 806 AND (SELECT COUNT(*) FROM parking_risk_result) = 806
     AND (SELECT COUNT(*) FROM rainfall_risk) = 5,

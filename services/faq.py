@@ -1,9 +1,45 @@
-"""FAQ 원문. 앱과 SQL 덤프에서 함께 사용한다."""
+"""sql/Table07_faq.sql의 FAQ를 화면과 SQL 덤프에서 함께 읽는다."""
+from pathlib import Path
+import re
+from typing import NamedTuple
 
-FAQ = [
-    ("위험지수", "위험지수는 무엇을 의미하나요?", "제공된 점수 CSV의 total_risk_score를 주차장 관리번호로 연결한 0~100점 상대 위험도입니다. 점수 파일에 값이 없는 주차장은 미산정으로 표시합니다."),
-    ("위험지수", "위험도가 낮으면 안전한가요?", "상대적으로 낮은 점수는 안전을 보장하지 않습니다. 현장 통제와 기상특보를 함께 확인하세요."),
-    ("서비스 이용", "실시간 침수 상황을 알 수 있나요?", "실시간 상황을 관측하거나 미래 침수를 예측하지 않습니다. 2025년 데이터 분석을 전제로 한 프로토타입입니다."),
-    ("서비스 이용", "위치를 허용하지 않아도 이용할 수 있나요?", "네. 처음에는 색동공원(강북구)을 임시 기준점으로 사용합니다. 지도 위 ‘◎ 현재 위치’에서 ‘GPS로 내 위치 찾기’를 누르고 브라우저 위치 권한을 허용하면 기기 위치를, 허용하지 않으면 기준 위치를 고르거나 좌표를 입력해 검색 반경, 주변 주차장 목록과 거리를 그 위치 기준으로 갱신합니다."),
-    ("데이터", "어떤 데이터를 사용하나요?", "최종 위험지수는 제공된 점수 CSV에서 읽습니다. 상세 화면의 참고 지표는 저지대 점수·자치구별 강수량·침수심 자료에서 가져옵니다. 집중호우는 같은 날짜의 연속 3시간 강수량이 60mm를 초과한 날을 하루 한 번 집계합니다."),
-]
+
+FAQ_SQL = Path(__file__).resolve().parents[1] / "sql" / "Table07_faq.sql"
+_STRING = r"'(?:\\.|''|[^'\\])*'"
+_ROW = re.compile(r"\(\s*" + r"\s*,\s*".join([f"({_STRING})"] * 4) + r"\s*\)", re.DOTALL)
+_INSERT = re.compile(
+    r"INSERT\s+INTO\s+`?faq`?\s+VALUES\s*(?P<rows>"
+    + _ROW.pattern + r"(?:\s*,\s*" + _ROW.pattern + r")*)\s*;",
+    re.IGNORECASE | re.DOTALL,
+)
+_ESCAPES = {"0": "\0", "b": "\b", "n": "\n", "r": "\r", "t": "\t", "Z": "\x1a"}
+
+
+class FAQEntry(NamedTuple):
+    faq_id: str
+    category: str
+    question: str
+    answer: str
+
+
+def _decode_string(value):
+    """MySQL 문자열의 따옴표와 줄바꿈 등을 복원한다. SQL은 실행하지 않는다."""
+    return re.sub(
+        r"\\(.)", lambda match: _ESCAPES.get(match[1], match[1]),
+        value[1:-1].replace("''", "'"), flags=re.DOTALL,
+    )
+
+
+def load_faq(path=FAQ_SQL):
+    """네 문자열 열(faq_id, category, question, answer)을 가진 팀 덤프를 읽는다."""
+    sql = Path(path).read_text(encoding="utf-8-sig")
+    entries = [
+        FAQEntry(*(_decode_string(value) for value in row.groups()))
+        for insert in _INSERT.finditer(sql)
+        for row in _ROW.finditer(insert["rows"])
+    ]
+    if not entries:
+        raise ValueError(f"FAQ INSERT 데이터를 찾을 수 없습니다: {path}")
+    if len({entry.faq_id for entry in entries}) != len(entries):
+        raise ValueError(f"FAQ 관리번호가 중복되었습니다: {path}")
+    return entries

@@ -22,7 +22,7 @@ def distance(lat, lon, target_lat, target_lon):
 
 def badge(value):
     text = risk_band(value)[1]
-    st.badge(text, color="gray" if text == "미산정" else "blue")
+    st.badge(text, color="blue")
 
 
 # Kakao navigation is temporarily disabled; implementation is in services/kakao_navi_view.py.
@@ -31,15 +31,13 @@ def detail(row):
     st.subheader(row["name"])
     st.caption(row["address"])
     st.caption(f'주차장관리번호: {row["parking_code"]}')
-    st.metric("상대적 침수 위험지수", "미산정" if pd.isna(row["score"]) else f'{row["score"]} / 100'
+    st.metric("상대적 침수 위험지수", f'{row["score"]} / 100')
     badge(row["score"])
     st.caption(NOTE)
     st.caption(f'기준점에서 {row["distance"]:,.0f}m · 직선거리')
     st.markdown("#### 참고 지표")
     for label, key in [("침수심 점수", "depth"), ("침수 대표좌표 거리 점수", "distance_risk"), ("강수위험도", "rain"), ("저지대 상대점수", "terrain")]:
-        if pd.isna(row[key]):
-            st.write(f"{label} · **미산정**")
-        else:
+        if pd.notna(row[key]):
             st.write(f'{label} · **{row[key]:.0f} / 100**')
             st.progress(float(row[key]) / 100)
     if pd.notna(row["rain_raw"]):
@@ -47,8 +45,6 @@ def detail(row):
     if pd.notna(row.get("flood_distance_m", float("nan"))):
         st.caption(f'가장 가까운 침수 대표좌표까지 {row["flood_distance_m"]:,.0f}m · 구역 경계까지의 거리가 아닙니다.')
         st.caption(f'정규화 기준: 침수심 {row["depth_reference_max"]:g} · 최대 최소거리 {row["distance_reference_max_m"]:,.0f}m · 강수위험도 {row["rain_reference_max"]:g}')
-    if pd.isna(row["score"]):
-        st.info(row["risk_missing_reason"])
     st.info("점수가 낮더라도 안전을 보장하지 않습니다. 현장 상황과 기상특보를 확인하세요.")
 
 
@@ -65,13 +61,11 @@ def sync_compare():
 
 
 def legend(map_data, color_min, color_max, per_row=6):
-    """기존 water-legend: 점수 구간별 자동차·물방울 핀 + 미산정 핀."""
+    """점수 구간별 자동차·물방울 핀."""
     items = []
     if map_data["score"].notna().any():
         items += [(marker_svg(float(score), False, color_min, color_max), label, interval)
                   for score, label, _, _, interval in RISK_BANDS]
-    if map_data["score"].isna().any():
-        items.append((marker_svg(None, False, color_min, color_max), "미산정", "입력 데이터 확인 중"))
     if not items:
         return
     with st.container(border=True):
@@ -87,7 +81,6 @@ frame = service_inventory()
 lat, lon = st.session_state.get("current_location", PREVIEW_LOCATION)
 frame["distance"] = frame.apply(lambda row: distance(lat, lon, row["lat"], row["lon"]), axis=1)
 frame["level"] = frame["score"].map(lambda score: risk_band(score)[1])
-unscored_count = int(frame["score"].isna().sum())
 scored_values = frame["score"].dropna()
 color_min = float(scored_values.min()) if not scored_values.empty else 0
 color_max = float(scored_values.max()) if not scored_values.empty else 100
@@ -139,7 +132,7 @@ elif district_view and district != "전체 지역":
     matches = matches[matches["district"] == district]
 matches = matches.sort_values("distance")
 map_matches = matches.copy()
-st.caption(f"전체 등록 주차장 {len(frame):,}개 · 현재 표시 {len(matches):,}개")
+st.caption(f"추정 위험점수 산정 주차장 {len(frame):,}개 · 현재 표시 {len(matches):,}개")
 if matches.empty and not searching and not district_view and has_location:
     nearest_distance = frame["distance"].min()
     st.info(f"현재 위치의 {radius_label} 반경 안에는 등록된 주차장이 없습니다. 가장 가까운 등록 주차장은 약 {nearest_distance / 1000:.1f}km 떨어져 있습니다. 현재 서비스 지역은 {SERVICE_AREA}입니다.")
@@ -161,7 +154,7 @@ if mode == "주변 주차장 검색":
             with st.container(border=True):
                 st.markdown(f'**{row["name"]}**')
                 st.caption(row["address"])
-                st.write(f'{row["distance"]:,.0f}m · 위험지수 미산정' if pd.isna(row["score"]) else f'{row["distance"]:,.0f}m · 위험지수 **{row["score"]}** / 100')
+                st.write(f'{row["distance"]:,.0f}m · 위험지수 **{row["score"]}** / 100')
                 badge(row["score"])
                 if st.button("상세 보기", key=f"detail_{identifier}", width="stretch"):
                     st.session_state["selected_id"] = identifier
@@ -170,7 +163,7 @@ if mode == "주변 주차장 검색":
                 st.button("비교에서 제외" if included else "비교에 담기", key=f"add_{identifier}", disabled=not included and len(st.session_state["compare_ids"]) >= 3, on_click=toggle_compare, args=(identifier,))
         st.caption(f'비교함 {len(st.session_state["compare_ids"])} / 3개')
     with columns[1]:
-        st.caption("자동차·물방울 핀으로 주차장을 표시합니다." + (" 연한 회색 핀은 위험점수 미산정입니다." if unscored_count else ""))
+        st.caption("자동차·물방울 핀으로 주차장을 표시합니다.")
         map_data = map_matches[["id", "name", "address", "lat", "lon", "score", "level"]].copy()
         map_data["icon"] = [marker_icon(score, int(identifier) == selected_id, color_min, color_max)
                             for identifier, score in zip(map_data["id"], map_data["score"])]
@@ -179,7 +172,7 @@ if mode == "주변 주차장 검색":
                    selected_id, show_all=show_all, has_location=has_location,
                    fit_rows=searching or district_view)
         legend(map_data, color_min, color_max, per_row=3 if selected_id is not None else 6)
-        st.caption("색상은 전체 산정 주차장의 최저 점수(하늘색)부터 최고 점수(남색)까지 이어집니다." + (" 연한 회색은 미산정입니다." if unscored_count else ""))
+        st.caption("색상은 전체 산정 주차장의 최저 점수(하늘색)부터 최고 점수(남색)까지 이어집니다.")
         st.caption(NOTE)
         st.caption("핀을 누르면 상세 패널이 열립니다. 핀에 마우스를 올리면 이름과 점수가 보입니다. 검색 반경과 거리는 기준 위치를 중심으로 계산됩니다.")
     if selected_id is not None:
@@ -212,7 +205,7 @@ with content:
     source_tab, reference_tab = st.tabs(["데이터 출처", "참고 지표"])
     with source_tab:
         st.write("최종 위험지수는 제공된 점수 CSV의 `total_risk_score`를 주차장 관리번호로 연결합니다.")
-        st.caption("점수 파일에 값이 없는 주차장은 미산정으로 표시합니다.")
+        st.caption("추정 위험점수가 산정된 주차장만 서비스합니다.")
     with reference_tab:
         st.caption("상세 화면의 침수심·거리·강수·저지대 점수는 참고 지표입니다.")
         st.caption("침수 파일에는 구역 경계 도형이 없어 대표좌표까지의 직선거리와 해당 좌표의 침수심을 사용한 추정 점수입니다. 미관측 지역의 침수 여부를 확정하는 값은 아닙니다.")

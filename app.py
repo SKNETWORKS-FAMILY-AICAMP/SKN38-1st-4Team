@@ -39,9 +39,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 카카오 길찾기(현재 비활성) 키는 코드에 적지 않고 환경 변수에서만 읽습니다.
-st.session_state["_kakao_rest_api_key"] = os.environ.get("KAKAO_REST_API_KEY", "").strip()
-
 if st.session_state.get("parking_dataset_version") != PARKING_DATA_VERSION:
     st.session_state.update(parking_dataset_version=PARKING_DATA_VERSION, compare_ids=[], selected_id=None, parking_district=SERVICE_DISTRICTS[0])
 if "compare_ids" not in st.session_state:

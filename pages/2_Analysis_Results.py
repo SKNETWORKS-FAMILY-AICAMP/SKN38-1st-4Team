@@ -10,15 +10,11 @@ from services.service_config import SERVICE_AREA
 
 frame = service_inventory()
 frame["level"] = frame["score"].map(lambda score: risk_band(score)[1])
-unscored_count = int(frame["score"].isna().sum())
 
 st.title("데이터로 살펴보는 침수 위험")
 st.info(NOTE)
-st.caption(f"전체 통계는 검색 반경과 무관하게 서비스 지역({SERVICE_AREA}) 주차장 {len(frame):,}개를 기준으로 집계합니다."
-           + (" 위험점수가 없는 주차장은 미산정으로 집계합니다." if unscored_count else ""))
-counts = frame["level"].value_counts().reindex(list(COLORS), fill_value=0)
-if not unscored_count:
-    counts = counts.drop("미산정")
+st.caption(f"전체 통계는 검색 반경과 무관하게 서비스 지역({SERVICE_AREA})의 추정 위험점수 산정 주차장 {len(frame):,}개를 기준으로 집계합니다.")
+counts = frame["level"].value_counts().reindex([band[1] for band in RISK_BANDS], fill_value=0)
 metrics = [("분석 대상 주차장", len(frame))] + [(f"상대 위험도 {name}", counts[name]) for name in reversed(counts.index)]
 for offset in range(0, len(metrics), 3):
     for col, (label, count) in zip(st.columns(3), metrics[offset:offset + 3]):

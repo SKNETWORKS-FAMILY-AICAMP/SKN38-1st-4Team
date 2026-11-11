@@ -36,7 +36,7 @@ if not exist "%CHIMCHAK_UV%" goto failed
 if errorlevel 1 goto failed
 :packages
 echo [2/3] Checking Streamlit dependencies...
-".venv\Scripts\python.exe" -c "import streamlit, pandas, pydeck, altair, streamlit_js_eval" >nul 2>nul
+".venv\Scripts\python.exe" -c "import streamlit, pandas, pydeck, altair, streamlit_js_eval, dotenv" >nul 2>nul
 if not errorlevel 1 goto validate
 ".venv\Scripts\python.exe" -m ensurepip --upgrade
 if errorlevel 1 goto uvpackages

@@ -1,6 +1,6 @@
 -- ============================================================
 -- FAQ 정보 조회 SQL (faq_queries.sql)
--- 데이터: faq 테이블 (화면 app.py 의 FAQ 5개, FAQ001~FAQ005)
+-- 데이터: faq 테이블 (sql/Table07_faq.sql과 FAQ 화면의 질문 27개, FAQ001~FAQ027)
 --   → 화면 'FAQ' 탭과 같은 순서의 질문/답변 목록, 카테고리별 조회, 키워드 검색
 -- 테이블 이름은 덤프(skn_1st_4team.sql)와 같은 소문자입니다. 리눅스 MySQL 은 테이블 이름의 대소문자를 구분합니다.
 -- 실행: mysql -u <사용자> -p --default-character-set=utf8mb4 skn_1st_4team < sql/faq_queries.sql
@@ -8,7 +8,7 @@
 -- 먼저 sql/skn_1st_4team.sql 을 오류 없이 끝까지 적재하세요. 아래 적재 확인 문장이 그 상태를 확인합니다.
 -- ============================================================
 
--- 연결 문자셋을 utf8mb4 로 맞춥니다. 클라이언트 문자셋이 latin1·euckr 이어도 한글 조건('위험지수')이 맞게 비교됩니다.
+-- 연결 문자셋을 utf8mb4 로 맞춥니다. 클라이언트 문자셋이 latin1·euckr 이어도 한글 조건('침수 위험도 지수')이 맞게 비교됩니다.
 SET NAMES utf8mb4;
 
 -- 적재 확인: 정렬판 덤프가 끝까지 들어간 DB 인지 봅니다(위험지수 열의 정수 형식과 테이블마다 행 수).
@@ -16,7 +16,7 @@ SET NAMES utf8mb4;
 SET @skn_check = IF(
     (SELECT NUMERIC_SCALE FROM information_schema.columns WHERE table_schema = DATABASE()
        AND table_name = 'parking_risk_result' AND column_name = 'total_risk_score') = 0
-    AND (SELECT COUNT(*) FROM faq) = 5 AND (SELECT COUNT(*) FROM flood_area) = 1132
+    AND (SELECT COUNT(*) FROM faq) = 27 AND (SELECT COUNT(*) FROM flood_area) = 1132
     AND (SELECT COUNT(*) FROM parking_flood_distance) = 806 AND (SELECT COUNT(*) FROM parking_lot) = 806
     AND (SELECT COUNT(*) FROM parking_lowland) = 806 AND (SELECT COUNT(*) FROM parking_risk_result) = 806
     AND (SELECT COUNT(*) FROM rainfall_risk) = 5,
@@ -34,13 +34,13 @@ SELECT
 FROM faq
 ORDER BY faq_id;
 
--- 2. 카테고리별 FAQ 조회 (화면 '질문 카테고리'에서 위험지수를 고른 결과와 같음)
+-- 2. 카테고리별 FAQ 조회 (화면 '질문 카테고리'에서 '침수 위험도 지수'를 고른 결과와 같음)
 SELECT
     faq_id,
     question,
     answer
 FROM faq
-WHERE category = '위험지수'
+WHERE category = '침수 위험도 지수'
 ORDER BY faq_id;
 
 -- 3. 특정 키워드가 포함된 FAQ 검색

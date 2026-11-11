@@ -32,6 +32,6 @@ def parking_inventory():
 
 
 def service_inventory():
-    """Return all parking locations in the five service districts."""
+    """Return only scored parking locations in the five service districts."""
     frame = parking_inventory()
-    return frame[frame["district"].isin(SERVICE_DISTRICTS)].reset_index(drop=True)
+    return frame[frame["district"].isin(SERVICE_DISTRICTS) & frame["score"].notna()].reset_index(drop=True)
