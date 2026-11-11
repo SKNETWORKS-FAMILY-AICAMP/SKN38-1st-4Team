@@ -17,6 +17,8 @@
 - [x] faq-sql-categories — 사용자 제공 `sql/Table07_faq.sql`을 화면·덤프 공통 원본으로 연결. FAQ 27개·카테고리 4개 선택 및 그룹 표시, 조회 SQL 3개 갱신. 폴더 이동 후 전체 테스트 33개 통과. Git 업로드 경로 13개는 `docs/upload_guide.md`에 지정, 업로드는 사용자 담당. 근거 `.handoff/faq-categories.md` (2026-11-11)
 
 - [x] api-env — 루트 `.env` 생성·카카오 길찾기 클라이언트 인증 연결. 키가 없으면 HTTP 미호출, 운영 환경 변수 우선. 의존성·배치 검사·문서 갱신, 전체 테스트 37개 통과. 근거 `.handoff/api-env.md` (2026-11-11)
+- [x] scored-service-only — 산정된 137개만 서비스 개수·검색·목록·지도·비교·분석에 포함. 미산정 안내 제거, 이전 세션 선택 초기화. 전체 38개 테스트 통과. 근거 `.handoff/scored-service-only.md` (2026-11-11)
+- [ ] remote-history-integration — 원격 ff922d9와 로컬 5206918 비교·원본 백업·README 내용 통합 준비 완료. 전체 38개 통과. 사용자가 Git 이력 병합 시작 후 충돌 파일을 준비본과 대조·해결하고 재검증. 근거 `.handoff/merge-latest/report.md` (2026-11-11)
 
 ## 지켜야 할 제약
 - (2026-11-11) "python라이브러리에서 GPS 라이브러리 이용해서 현재위치 기능 추가해줘."
@@ -26,7 +28,10 @@
 - (2026-11-11) 사용자 지시: Codex는 Git 명령을 직접 실행하지 않는다.
 
 ## 인계
-- 갱신: 2026-11-11 (위험점수 CSV data/raw/ 이동 · API .env·FAQ sql/ 정리 유지)
+- 갱신: 2026-11-11 (remote-history-integration 내용 통합 준비 · 사용자 Git 병합 대기)
+- 상태(remote-history-integration): 원격 README 전체 보존 + 로컬 실행 안내 `docs/run_guide.md`. 앱·SQL·데이터 유지. 양쪽 원본·비교표·복구용 준비본은 `.handoff/merge-latest/`. `.handoff/` 업로드 제외.
+- 다음 행동(remote-history-integration): 사용자가 `.handoff/merge-latest/report.md`의 Git 단계 실행 후 `git status --short` 전달. 공통 조상 조회 결과 없음. Codex는 Git 명령 미실행.
+- 마지막 검증(remote-history-integration): 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK. CSV 원격·로컬 SHA-256 동일, FAQ 외 6개 SQL 입력 블록 동일, README 원문·백업 해시·문서 파일 링크 확인.
 - 상태(risk-csv-location): `data/raw/parking_risk_result_recalculated.csv`로 이동, `services/data_paths.py:14`·README·`docs/risk_model.md:3` 경로 갱신. 루트 사본 없음. 이번 작업 완료, Git 명령 미실행.
 - 마지막 검증(risk-csv-location): `/var/folders/km/_1_1x78175s0pkx210lr4xr00000gn/T/faq-verify-ik8vjdbu/bin/python -B -m unittest discover -s tests -t .` → 37 OK. 이동 전후 SHA-256 `d30304771fa6364ce1b961d7bb771fec69505c2a8978cee86f081b34542d4934` 동일, 점수 137개·서비스 미산정 26개 유지.
 - 상태(api-env): `services/api_config.py:10`이 루트 `.env`의 키를 읽고 `services/kakao_navi.py:14`가 인증한다. 운영 환경 변수 우선, 파일 값은 요청 시 갱신. 의존성·배치 검사·문서 반영, `.env*` 업로드 제외.
@@ -37,17 +42,17 @@
 - 마지막 검증(faq): SQL 이동 후 33 OK, 원본 SHA-256 동일·덤프는 경로 주석 외 동일·업로드 13개 경로 실재. `.handoff/faq-categories.md`.
 - 제한(faq): 원문 FAQ024의 164곳과 현재 산정 137곳이 다르며 제공 문구는 유지했다. 실제 MySQL 적재·브라우저 시각 검증은 미실행.
 - 상태(home-syntax): `pages/0_Home.py:34` 닫는 괄호 수정 후 이번 전체 33개 테스트·홈 AppTest 통과.
-- 상태(supplied-risk-scores): 제공 파일에서 실제 G열인 `total_risk_score`를 `parking_lot_id`로 연결한다. 137개 원점수 21~80, 정수형 `Int64`. 서비스 5개 구 163개 중 26개 미산정. SQL의 전체 806개 행 중 669개는 최종 점수 NULL.
+- 상태(supplied-risk-scores): CSV G열 `total_risk_score`를 `parking_lot_id`로 연결. 137개 원점수 21~80, `Int64`. 서비스는 산정 137개만 포함. SQL 전체 806개 중 669개 점수 NULL은 유지.
 - 마지막 검증(supplied-risk-scores): 기존 29개 통과·정수 표시·원본 점수 일치 확인 후, 이번 FAQ 수정에서도 전체 33개 통과 및 점수 테이블 무변경 확인.
 - 상태(restructure): `docs/restructure/target_map.md` 4단계 완료. 앱은 `app.py`로 실행. README의 새 테스트 명령이 이 문서 상단의 이동 전 GPS 판정 명령을 대체한다.
 - 다음 행동(restructure): 구조 정리 완료. 추가 Git 확인·커밋은 사용자가 직접 관리한다(Codex의 Git 명령 실행 금지).
 - 마지막 검증(restructure): Homebrew Python 3.12 환경에서 29개 OK(기존 28개 + 화면 회귀 1개). AppTest와 실제 Streamlit 서버의 버튼 이벤트로 홈 → FAQ → 분석 → 홈, 5개 구·163개 확인. 생성 SQL의 주석 외 전체가 변경 전 생성 기준과 일치, 기존 덤프의 FAQ004 GPS 문구 동기화. 실제 브라우저 시각 검증과 Windows 배치 실행은 미실행.
-- 커밋 안 된 파일: 기존 홈·FAQ 변경 유지. API 변경 목록은 `.handoff/api-env.md`, FAQ 13개 경로는 `docs/upload_guide.md` 참조. `.env`는 로컬 전용. Git 전체 변경 목록은 미조회.
+- 커밋 안 된 파일: 사용자 조회에서 이미 staged인 `TASKS.md` + 이번 `.gitignore`, `README.md`, `docs/run_guide.md`(신규), `docs/upload_guide.md`. 이후 Git 상태는 사용자 재조회 필요. `.env` 유지.
 - 한도 대비(사용자 지시 2026-11-11 "세션이 한도에 걸릴 경우 codex cli를 이용해서 작업 계속 이어가도록 해"): 대본에 "You've hit your session limit" 가 마지막이면 .handoff/codex_fallback.py 가 herdr-launcher 로 codex(--effort high)를 띄워 .handoff/cards/<이름>.md 로 잇는다
 - 기준점: git 커밋 57e85ef(구조 정리 전 전체, docs/restructure 제외) · 판정 명령+test_build_rainfall → 28 통과 · 실패 0 (09:24)
-- 서비스 범위(service-five-districts): `services.parking_data.service_inventory()`는 강수 자료가 있는 5개 구의 주차장 163개를 표시한다. CSV에 점수가 없으면 목록·지도·분석에서 미산정으로 표시한다.
+- 서비스 범위(scored-service-only): `services/parking_data.py:34`에서 서비스 5개 구 + score.notna() 필터. 산정 137개만 개수·검색·목록·지도·비교·분석에 노출. 데이터 버전 `scored-service-v5`로 이전 선택 초기화.
 - 다음 행동(rainfall, 보류): 구를 늘릴 때만 「사용자 단계」 3번 로그인 → AWS 23지점(`scripts.build_rainfall.STATIONS`, 108 제외) + ASOS 108의 2025 시간 강수량 CSV를 `data/raw/kma_hourly/`에 → `python scripts/build_rainfall.py --check-only` → 강수 집계 갱신. 최종 위험지수는 별도로 점수 CSV에 추가.
-- 마지막 검증(서비스 범위): 판정 명령 → Ran 28 · OK · AppTest 홈 163개·구 선택 5개·분석 지표에 미산정 없음 · verify-app 흐름(홈·분석 캡처) 통과, 지도 배경만 인터넷 차단
+- 마지막 검증(서비스 범위): 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK. AppTest 지도 137개·미산정 이름 검색 0개·비교 선택 137개·분석 합계 137개·이전 세션 초기화 확인. 근거 `.handoff/scored-service-only.md`.
 - git: 2026-11-11 09:24 저장소 만듦(main). 현재 세션은 사용자 지시에 따라 모든 Git 명령을 실행하지 않는다.
 - 미결정: 없음 (사용자가 2026-11-11 '5개 구 우선' 선택)
 

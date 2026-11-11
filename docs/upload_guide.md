@@ -12,9 +12,9 @@
 
 ## 팀원 실행
 
-저장소를 Clone하거나 Code → Download ZIP으로 내려받아 압축을 풉니다. Python 3.10 이상을 설치한 뒤 Windows에서는 `실행.bat`을 실행하세요. 다른 환경은 [README의 설치 명령](../README.md#실행)을 따릅니다.
+저장소를 Clone하거나 Code → Download ZIP으로 내려받아 압축을 풉니다. Python 3.10 이상을 설치한 뒤 Windows에서는 `실행.bat`을 실행하세요. 다른 환경은 [실행·개발 안내의 설치 명령](run_guide.md#실행)을 따릅니다.
 
-기본 지도는 API 키 없이 사용할 수 있습니다. 현재 비활성인 카카오 길찾기에 쓰는 키는 프로젝트 루트의 `.env`에 `KAKAO_REST_API_KEY=발급받은_REST_API_키` 형식으로 설정합니다. 같은 이름의 운영 환경 변수가 있으면 우선하며, 상세 설정은 [README의 API 키 설정](../README.md#api-키-설정-env)을 따릅니다. 실제 키는 공유하지 않습니다.
+기본 지도는 API 키 없이 사용할 수 있습니다. 현재 비활성인 카카오 길찾기에 쓰는 키는 프로젝트 루트의 `.env`에 `KAKAO_REST_API_KEY=발급받은_REST_API_키` 형식으로 설정합니다. 같은 이름의 운영 환경 변수가 있으면 우선하며, 상세 설정은 [실행·개발 안내의 API 키 설정](run_guide.md#api-키-설정-env)을 따릅니다. 실제 키는 공유하지 않습니다.
 
 `.env` 연결을 반영할 때는 루트의 `.gitignore`, `requirements.txt`, `prepare.bat`, `app.py`와 `services/api_config.py`, `services/kakao_navi.py`, `services/kakao_navi_view.py`, `tests/test_api_config.py`를 같은 경로로 함께 올립니다. `.env`는 로컬에서만 사용합니다. GitHub 웹의 Upload files는 `.gitignore`가 파일 선택을 막지 않으므로 `.env`와 사본을 직접 제외합니다.
 
