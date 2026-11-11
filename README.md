@@ -274,8 +274,9 @@ project/
 ## 🚀 실행 방법
 
 ```bash
-# 저장소 복제 (실제 주소로 변경)
-git https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
+# 저장소 복제 
+git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN38-1st-4Team.git
+# 프로젝트 폴더 이동
 cd SKN38-1st-4Team
 ```
 
