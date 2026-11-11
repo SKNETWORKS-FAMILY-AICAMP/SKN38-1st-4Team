@@ -31,7 +31,7 @@ def detail(row):
     st.subheader(row["name"])
     st.caption(row["address"])
     st.caption(f'주차장관리번호: {row["parking_code"]}')
-    st.metric("상대적 침수 위험지수", "미산정" if pd.isna(row["score"]) else f'{row["score"]} / 100')
+    st.metric("상대적 침수 위험지수", "미산정" if pd.isna(row["score"]) else f'{row["score"]} / 100'
     badge(row["score"])
     st.caption(NOTE)
     st.caption(f'기준점에서 {row["distance"]:,.0f}m · 직선거리')
