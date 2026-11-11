@@ -1,6 +1,6 @@
 import unittest
 
-from parking_marker import marker_icon, marker_svg, normalized_marker_score, risk_band
+from services.parking_marker import marker_icon, marker_svg, normalized_marker_score, risk_band
 
 
 class ParkingMarkerTests(unittest.TestCase):

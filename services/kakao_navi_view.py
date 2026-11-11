@@ -5,7 +5,7 @@ import pydeck as pdk
 
 def route_panel(row, lat, lon):
     from datetime import datetime
-    from kakao_navi import directions, DirectionsError
+    from services.kakao_navi import directions, DirectionsError
     identifier = int(row["id"])
     st.markdown("#### 카카오 자동차 길찾기")
     st.caption("출발지: 강남역 · 목적지: 선택한 예시 좌표")
@@ -17,7 +17,7 @@ def route_panel(row, lat, lon):
         st.session_state.pop(state_key, None)
         api_key = st.session_state.get("_kakao_rest_api_key", "")
         if not api_key:
-            st.error("app.py 맨 위의 KAKAO_REST_API_KEY에 키를 입력하세요.")
+            st.error("환경 변수 KAKAO_REST_API_KEY에 키를 입력하세요.")
         else:
             try:
                 with st.spinner("카카오에서 자동차 경로를 조회하고 있습니다…"):

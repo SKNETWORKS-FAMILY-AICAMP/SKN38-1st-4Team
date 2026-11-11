@@ -3,7 +3,7 @@ import unittest
 
 import pandas as pd
 
-from map_payload import json_records
+from services.map_payload import json_records
 
 
 class MapPayloadTests(unittest.TestCase):

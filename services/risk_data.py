@@ -1,6 +1,5 @@
-"""Join source measurements and apply only explicitly configured scoring rules."""
+"""Join the supplied final scores and calculate supporting measurements."""
 import json
-from pathlib import Path
 from zipfile import ZipFile
 from xml.etree import ElementTree as ET
 
@@ -8,9 +7,25 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from risk_model import distance_score, normalize_by_max, rainfall_risk, weighted_risk
+from services.data_paths import FLOOD_XLSX, LOWLAND_CSV, RAINFALL_CSV, RISK_CONFIG, RISK_RESULTS_CSV
+from services.risk_model import distance_score, normalize_by_max, rainfall_risk
 
-RISK_DATA_VERSION = "calculated-risk-v1"
+
+def read_total_scores(path, parking_codes):
+    scores = pd.read_csv(
+        path, encoding="utf-8-sig", usecols=["parking_lot_id", "total_risk_score"],
+        dtype=str, keep_default_na=False,
+    )
+    codes = scores["parking_lot_id"].str.strip()
+    if codes.eq("").any() or codes.duplicated().any():
+        raise ValueError("점수 CSV의 주차장 관리번호가 비어 있거나 중복되었습니다.")
+    if not codes.isin(parking_codes).all():
+        raise ValueError("점수 CSV에 주차장 목록에 없는 관리번호가 있습니다.")
+    values = pd.to_numeric(scores["total_risk_score"].str.strip().replace("", pd.NA), errors="raise")
+    scored = values.dropna()
+    if not (scored.between(0, 100) & scored.mod(1).eq(0)).all():
+        raise ValueError("점수 CSV의 total_risk_score는 0~100 사이의 정수여야 합니다.")
+    return pd.Series(values.astype("Int64").array, index=codes)
 
 
 def read_flood_points(path):
@@ -45,11 +60,15 @@ def read_flood_points(path):
 
 
 @st.cache_data
-def attach_risk_data(parking, data_dir, source_versions):
-    base = Path(data_dir)
-    config = json.loads((base / "risk_config.json").read_text(encoding="utf-8"))
+def attach_risk_data(parking, source_versions):
+    """Join measurements, invalidating the cache when any source changes."""
+    config = json.loads(RISK_CONFIG.read_text(encoding="utf-8"))
     frame = parking.copy()
-    terrain = pd.read_csv(base / "lowland.csv", encoding="utf-8-sig", dtype=str)
+    totals = read_total_scores(RISK_RESULTS_CSV, frame["parking_code"])
+    frame["score"] = frame["parking_code"].map(totals)
+    frame["risk_missing_reason"] = ""
+    frame.loc[frame["score"].isna(), "risk_missing_reason"] = "제공된 점수 파일에 이 주차장의 최종 점수가 없습니다."
+    terrain = pd.read_csv(LOWLAND_CSV, encoding="utf-8-sig", dtype=str)
     key = "주차장관리번호(수정)"
     terrain = terrain[terrain[key].isin(frame["parking_code"])].copy()
     if terrain[key].duplicated().any():
@@ -59,7 +78,7 @@ def attach_risk_data(parking, data_dir, source_versions):
     frame["lowland_raw"] = frame["parking_code"].map(terrain_map)
     frame["terrain"] = frame["lowland_raw"]
 
-    rain = pd.read_csv(base / "rainfall.csv", encoding="utf-8-sig")
+    rain = pd.read_csv(RAINFALL_CSV, encoding="utf-8-sig")
     if rain["자치구"].duplicated().any() or rain["연도"].nunique() != 1:
         raise ValueError("강수 원본은 한 해의 자치구별 고유 행이어야 합니다.")
     rain["calculated_risk"] = rain.apply(lambda row: rainfall_risk(
@@ -76,14 +95,13 @@ def attach_risk_data(parking, data_dir, source_versions):
     frame["rain"] = frame["rain_raw"].map(lambda value: normalize_by_max(value, rain_max))
     frame["rain"] = pd.to_numeric(frame["rain"], errors="coerce") * 100
 
-    flood = read_flood_points(base / "flood_depth.xlsx")
+    flood = read_flood_points(FLOOD_XLSX)
     flood_districts = flood["정제주소"].str.extract(r"서울(?:특별시)?\s*([가-힣]+?구)", expand=False)
     flood = flood[flood_districts.isin(frame["district"].unique())].copy()
     depth_max = float(flood["depth"].max())
     frame["depth"] = float("nan")
     frame["distance_risk"] = float("nan")
     frame["history"] = float("nan")
-    frame["score"] = float("nan")
     if config.get("distance_method") == "representative_point":
         # The source has representative coordinates, not polygon boundaries.
         # This data-based estimate uses source coordinates, not polygon geometry.
@@ -106,25 +124,5 @@ def attach_risk_data(parking, data_dir, source_versions):
 
     frame["depth_reference_max"] = depth_max
     frame["rain_reference_max"] = rain_max
-    frame["risk_method"] = "대표좌표 기반 추정"
-
-    def calculate(row):
-        return weighted_risk(row["depth"] / 100, row["distance_risk"] / 100, row["rain"] / 100, normalize_by_max(row["lowland_raw"], config["lowland_reference_max"]))
-
-    frame["score"] = pd.to_numeric(frame.apply(calculate, axis=1), errors="coerce")
-    def missing_reason(row):
-        reasons = []
-        if pd.isna(row["rain_raw"]):
-            reasons.append(f'{row["district"]} 강수 데이터 없음')
-        if normalization not in ("source_max", "hundred"):
-            reasons.append("강수 정규화 기준 확인 중")
-        if pd.isna(row["lowland_raw"]):
-            reasons.append("저지대 점수 없음")
-        if config.get("distance_method") != "representative_point":
-            reasons.append("침수구역 최소거리 데이터·방식 확인 중")
-        elif config.get("distance_direction") not in ("nearer_higher", "farther_higher"):
-            reasons.append("거리 정규화 방향 확인 중")
-        return " · ".join(reasons)
-
-    frame["risk_missing_reason"] = frame.apply(missing_reason, axis=1)
+    frame["risk_method"] = "제공된 CSV 최종 점수"
     return frame

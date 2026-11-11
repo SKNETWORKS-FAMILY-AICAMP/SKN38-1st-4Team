@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_rainfall import read_hourly, gaps, main
+from scripts.build_rainfall import read_hourly, gaps, main
 
 
 def day_rows(station, date, values, flag_column=False):

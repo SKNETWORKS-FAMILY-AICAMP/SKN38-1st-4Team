@@ -23,14 +23,13 @@ API 키는 필요 없습니다. 지도 배경 타일 로딩에만 인터넷 연�
 
 ## 기존과 동일하게 유지한 것
 
-- 로고(`assets/chimchak-logo.png`), 자동차·물방울 지도 핀(`parking_marker.py` 원본 SVG), 점수별 물 높이·색상 그라데이션, 선택 핀 강조
+- 로고(`assets/logo_main.png`), 자동차·물방울 지도 핀(`services/parking_marker.py` 원본 SVG), 점수별 물 높이·색상 그라데이션, 선택 핀 강조
 - 사이드바 메뉴 3개: 홈(주차장 탐색) / FAQ / 분석 데이터 결과
 - 히어로 문구와 태그, 상단 브랜드 바, 하단 푸터
-- 검색(거리 제한 없음), 내 주변 반경(200m–2km, 기본 300m), 전체보기 ↔ 구별 보기(산정된 곳만), 가까운 거리순 목록 3개
+- 검색(거리 제한 없음), 내 주변 반경(200m–2km, 기본 300m), 전체보기 ↔ 구별 보기, 가까운 거리순 목록 3개
 - 핀 클릭·상세 보기 → 상세 패널, 비교에 담기(최대 3개), 주차장 상세 비교(정렬 3종)
 - 핀 아래 점수 라벨(전체보기에서는 숨김), 점수 구간별 핀 범례
-- 데이터 출처·계산 방법 탭, 분석 페이지(등급 도넛·구간 막대·상위/하위), FAQ 카테고리
-- 위험점수 계산(`risk_model.py`, `risk_data.py`, `parking_data.py`)과 테스트 파일은 원본 그대로
+- 데이터 출처·참고 지표 탭, 분석 페이지(등급 도넛·구간 막대·상위/하위), FAQ 카테고리
 
 ## 바뀐 것 (JavaScript가 필요해 대체한 부분)
 
@@ -43,17 +42,47 @@ API 키는 필요 없습니다. 지도 배경 타일 로딩에만 인터넷 연�
 | 핀 클릭 시 정보창 | 핀에 마우스를 올리면 툴팁, 클릭하면 상세 패널 |
 | `assets/design.css`, `style.css` 스타일 | `.streamlit/config.toml` 테마 색상 |
 
-카카오 길찾기(`kakao_panel.py`, `kakao_navi.py`)는 원본처럼 비활성 상태로 보관했습니다. 키는 코드에 적지 않고 환경 변수 `KAKAO_REST_API_KEY`에서만 읽습니다.
+카카오 길찾기(`services/kakao_navi_view.py`, `services/kakao_navi.py`)는 원본처럼 비활성 상태로 보관했습니다. 키는 코드에 적지 않고 환경 변수 `KAKAO_REST_API_KEY`에서만 읽습니다.
 
 ## 예시 데이터와 제한
 
-서비스 지역은 강수 원본이 있는 5개 구(강북·강서·도봉·서대문·은평)이며, 앱은 이 구의 주차장 163개만 보여 줍니다. 모두 위험점수가 산정됩니다.
-점수 계산과 정규화 기준(최대 최소거리 등)은 주차장 806개 전체로 하므로, 서비스 지역을 좁혀도 163개의 점수는 바뀌지 않습니다. SQL 덤프도 806개 전체를 담습니다.
-다른 구는 2025년 기상청 시간별 강수 CSV 를 `data/kma_hourly/` 에 두고 `python build_rainfall.py` 로 `data/rainfall.csv` 에 행을 추가하면 서비스 지역에 자동으로 들어옵니다(기상자료개방포털 내려받기는 로그인 필요).
-대표좌표 기반 추정 위험도이며 실시간 침수 예측이 아닙니다. 낮은 점수도 안전을 보장하지 않습니다. 거리는 모두 직선거리입니다.
+서비스 지역은 강수 자료가 있는 5개 구(강북·강서·도봉·서대문·은평)의 주차장 163개입니다. 그중 137개의 최종 위험지수는 `parking_risk_result_recalculated.csv`의 `total_risk_score` 정수를 주차장 관리번호로 연결해 표시합니다. 점수가 없는 26개는 미산정입니다.
+침수심·거리·강수·저지대는 상세 화면의 참고 지표입니다. SQL 덤프는 전체 주차장 806개와 CSV에서 가져온 최종 점수를 담습니다.
+다른 구를 추가하려면 2025년 기상청 시간별 강수 CSV를 `data/raw/kma_hourly/`에 두고 `python scripts/build_rainfall.py`로 강수 집계를 갱신합니다. 최종 위험지수는 점수 CSV에 해당 관리번호와 점수를 추가해야 표시됩니다.
+점수는 상대 위험도이며 실시간 침수 예측이 아닙니다. 낮은 점수도 안전을 보장하지 않습니다. 거리는 모두 직선거리입니다.
+
+## 폴더 구조
+
+```text
+├── app.py                    # Streamlit 진입점
+├── parking_risk_result_recalculated.csv  # 제공된 최종 위험지수
+├── pages/
+│   ├── 0_Home.py             # 주차장 검색·지도·비교
+│   ├── 1_FAQ.py
+│   └── 2_Analysis_Results.py
+├── services/                 # 자료 적재, 위험도, 지도·GPS, 공통 UI
+├── scripts/                  # 강수 집계와 MySQL 덤프 생성
+├── tests/                    # unittest와 검증 기준값
+├── data/
+│   ├── raw/                  # 주차장, 침수심, 저지대, 기상청 시간자료
+│   ├── processed/            # 자치구별 강수 집계
+│   └── risk_config.json      # 위험점수 계산 설정
+├── sql/                      # MySQL 덤프와 조회 쿼리
+├── docs/                     # 위험점수, 팀 공동작업, 구조 정리
+├── assets/                   # 로고와 마커 참고 이미지
+└── .streamlit/               # Streamlit 테마
+```
+
+위험점수 계산과 데이터 범위는 [위험점수 문서](docs/risk_model.md), 팀원 실행과 업로드 절차는 [공동작업 안내](docs/upload_guide.md)에 있습니다.
+MySQL 덤프를 다시 생성하려면 프로젝트 루트에서 `python scripts/build_sql_dump.py`를 실행합니다.
 
 ## 테스트
 
 ```bash
-python -m unittest test_risk_model test_parking_marker test_map_payload test_risk_inventory test_gps_location test_build_rainfall
+python -m unittest discover -s tests -t .
 ```
+
+git add .
+git restore --staged <README.md>
+
+git add . ":!README.md"

@@ -2,12 +2,11 @@
 
 Tables, column names and the file layout follow the team dump
 dump-skn_1st_4team-202611102110.sql (7 tables, mysqldump format). Values come from
-parking_inventory() (the frame app.py draws), data/flood_depth.xlsx, data/rainfall.csv and
-the FAQ list in app.py, so the database holds what the screens show. Run from the project folder:
+the full parking_inventory() with final scores from parking_risk_result_recalculated.csv,
+the supporting measurements and the FAQ list used by the app. Run from the project folder:
 
-    python sql/build_dump.py
+    python scripts/build_sql_dump.py
 """
-import ast
 import logging
 import math
 import sys
@@ -15,14 +14,17 @@ from collections import namedtuple
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+ROOT = Path(__file__).resolve().parents[1]
+if not __package__:
+    sys.path.insert(0, str(ROOT))
 logging.getLogger("streamlit").setLevel(logging.ERROR)
 
 import pandas as pd  # noqa: E402
 
-DATA = ROOT / "data"
-OUTPUT = Path(__file__).resolve().parent / "skn_1st_4team.sql"
+from services.data_paths import FLOOD_XLSX, RAINFALL_CSV  # noqa: E402
+from services.faq import FAQ  # noqa: E402
+
+OUTPUT = ROOT / "sql" / "skn_1st_4team.sql"
 DATABASE = "skn_1st_4team"
 TABLE_OPTIONS = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
 # mysql_real_escape_string, which mysqldump uses for string values.
@@ -103,15 +105,6 @@ FOOTER = """/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 """
 
 
-def faq_rows():
-    """Read the FAQ literal from app.py without running the Streamlit page."""
-    tree = ast.parse((ROOT / "app.py").read_text(encoding="utf-8"))
-    for node in tree.body:
-        if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "FAQ" for t in node.targets):
-            return ast.literal_eval(node.value)
-    raise ValueError("app.py 에서 FAQ 목록을 찾지 못했습니다.")
-
-
 # The team dump's calculated_at; the screens never read it, so it stays as the team wrote it.
 CALCULATED_AT = "2026-11-09 23:15:07"
 
@@ -119,7 +112,7 @@ def notes(tables):
     """The header comment. The new counts, the depth maximum and the grade bands are read from the tables and
     parking_marker.RISK_BANDS so they cannot go stale; the team dump's numbers (204, 137, 3단계, 27) are text,
     and verify_mysql_load.py checks every number here against the team dump and the frontend."""
-    from parking_marker import RISK_BANDS
+    from services.parking_marker import RISK_BANDS
 
     count = {table.name: len(table.rows) for table in tables}
     by_name = {table.name: table for table in tables}
@@ -133,9 +126,9 @@ def notes(tables):
     scored = count["parking_risk_result"] - unscored
     depth_max = max(float(value) for value in column("flood_area", "depth_m"))
     bands = ", ".join(f"{band[4]} {band[1]}" for band in RISK_BANDS)
-    return f"""-- {DATABASE} 정렬판 (MySQL 8) — sql/build_dump.py 가 만든 파일입니다. 직접 고치지 말고 생성기를 다시 실행하세요.
+    return f"""-- {DATABASE} 정렬판 (MySQL 8) — scripts/build_sql_dump.py 가 만든 파일입니다. 직접 고치지 말고 생성기를 다시 실행하세요.
 -- 기준: 팀 최종 덤프 dump-skn_1st_4team-202611102110.sql 의 7테이블·열 이름·형식.
---       값은 프론트엔드 parking_inventory() 가 계산해 화면에 보여 주는 값과 app.py 의 FAQ 입니다.
+--       값은 전체 주차장 목록, 제공된 점수 CSV와 참고 자료, 화면에 쓰는 FAQ입니다.
 -- 적재(데이터베이스를 먼저 만들어 두세요. 같은 이름의 테이블 {len(tables)}개는 지우고 다시 만듭니다):
 --   mysql -u <사용자> -p --default-character-set=utf8mb4 {DATABASE} < sql/{OUTPUT.name}
 --   PowerShell 은 < 를 쓸 수 없으므로: mysql -u <사용자> -p --default-character-set=utf8mb4 {DATABASE} -e "source sql/{OUTPUT.name}"
@@ -144,25 +137,25 @@ def notes(tables):
 --   열어 두면 DROP TABLE 에서 출력 없이 기다리니 닫고 실행하세요. 멈추거나 끊겼으면 같은 명령을 처음부터 다시 실행합니다.
 -- 팀 덤프와 다른 점:
 --   parking_lot.latitude DECIMAL(10,7) → (11,8): 원본 위도 소수 8자리를 그대로 담습니다(기준점 거리 표시).
---   parking_lowland.lowland_score DECIMAL(6,2) → (8,4): 저지대 상대점수 .1f 표시가 같아지는 자릿수입니다.
+--   parking_lowland.lowland_score DECIMAL(6,2) → (8,4): 저지대 상대점수 원값의 정밀도를 유지합니다.
 --   flood_area.depth_m DECIMAL(5,2) 추가: 원 침수심(단위 m 는 추정). depth_score 는 그대로 침수심 ÷ {depth_max:g} 입니다.
 --   parking_flood_distance 204 → {count["parking_flood_distance"]}행(주차장마다 가장 가까운 침수 지점 하나), distance_m DECIMAL(10,2) → (11,3),
 --     flood_risk_score = 침수심 점수 × 0.6 + 거리 점수 × 0.4 (0~100 척도: 침수심 점수 = depth_score × 100,
 --     거리 점수 = (1 − 거리 ÷ 전체 최대 거리) × 100).
 --   parking_risk_result 137 → {count["parking_risk_result"]}행: result_id = 프론트 주차장 번호(원본 CSV 순서, 화면 정렬 기준이므로 ORDER BY result_id 로 읽기),
---     total_risk_score DECIMAL(5,2) → (7,4) = 화면 위험지수, rainfall_risk_score = 정규화 강수(원값 ÷ 최댓값 × 100),
---     risk_grade 는 팀의 3단계(낮음·보통·높음) 대신 화면의 {len(RISK_BANDS)}단계입니다(위험지수의 정수 부분 기준).
+--     total_risk_score는 parking_risk_result_recalculated.csv의 0~100 정수 점수입니다. rainfall_risk_score는 정규화 강수 참고값입니다.
+--     risk_grade는 화면과 같은 {len(RISK_BANDS)}단계로 분류합니다.
 --     등급 구간: {bands}.
---     risk_rank 는 total_risk_score(소수 4자리) 내림차순 순위로 다시 매겼습니다(동점은 같은 순위, 산정된 {scored}곳).
---     강수 자료가 없는 자치구의 {unscored}행은 total_risk_score·rainfall_risk_score·risk_rank·analysis_year 가 NULL, risk_grade '미산정'.
---   faq: 팀 FAQ 27개 대신 화면(app.py)의 FAQ {count["faq"]}개입니다.
+--     risk_rank는 정수 점수의 내림차순 순위입니다(동점은 같은 순위, 산정된 {scored}곳).
+--     점수 파일에서 값을 찾을 수 없는 {unscored}행은 total_risk_score·risk_rank가 NULL, risk_grade는 '미산정'입니다.
+--   faq: 팀 FAQ 27개 대신 화면(services/faq.py)의 FAQ {count["faq"]}개입니다.
 """
 
 
 def build_tables():
-    from parking_data import parking_inventory
-    from parking_marker import risk_band
-    from risk_data import read_flood_points
+    from services.parking_data import parking_inventory
+    from services.parking_marker import risk_band
+    from services.risk_data import read_flood_points
 
     frame = parking_inventory().sort_values("parking_code").reset_index(drop=True)
     if frame["parking_code"].duplicated().any() or frame["id"].duplicated().any():
@@ -171,16 +164,14 @@ def build_tables():
         if frame[column].nunique(dropna=False) != 1:
             raise ValueError(f"{column} 가 주차장마다 달라 한 기준으로 저장할 수 없습니다.")
     depth_max = float(frame["depth_reference_max"].iloc[0])
-    flood = read_flood_points(DATA / "flood_depth.xlsx")
+    flood = read_flood_points(FLOOD_XLSX)
     flood["flood_id"] = pd.to_numeric(flood["flood_id"], errors="raise").astype(int)
     flood = flood.sort_values("flood_id")
     if float(flood["depth"].max()) != depth_max:
         raise ValueError("전체 침수 지점의 최대 침수심이 화면의 정규화 기준과 다릅니다.")
-    rain = pd.read_csv(DATA / "rainfall.csv", encoding="utf-8-sig").sort_values("지점")
+    rain = pd.read_csv(RAINFALL_CSV, encoding="utf-8-sig").sort_values("지점")
 
-    total_text = frame["score"].map(lambda value: None if pd.isna(value) else f"{value:.4f}")
-    stored_total = pd.to_numeric(total_text, errors="coerce")
-    frame["risk_rank"] = stored_total.rank(method="min", ascending=False)
+    frame["risk_rank"] = frame["score"].dropna().rank(method="min", ascending=False)
     frame["level"] = frame["score"].map(lambda value: risk_band(value)[1])
 
     return [
@@ -192,7 +183,7 @@ def build_tables():
             "PRIMARY KEY (`faq_id`)",
         ], [("faq_id", None), ("category", None), ("question", None), ("answer", None)],
             [(f"FAQ{number:03d}", category, question, answer)
-             for number, (category, question, answer) in enumerate(faq_rows(), start=1)]),
+             for number, (category, question, answer) in enumerate(FAQ, start=1)]),
         Table("flood_area", [
             "`flood_id` int NOT NULL",
             "`address` varchar(150) DEFAULT NULL",
@@ -242,7 +233,7 @@ def build_tables():
             "`flood_risk_score` decimal(5,2) DEFAULT NULL",
             "`rainfall_risk_score` decimal(5,2) DEFAULT NULL",
             "`lowland_risk_score` decimal(5,2) DEFAULT NULL",
-            "`total_risk_score` decimal(7,4) DEFAULT NULL",
+            "`total_risk_score` tinyint unsigned DEFAULT NULL",
             "`risk_grade` varchar(10) DEFAULT NULL",
             "`risk_rank` int DEFAULT NULL",
             "`calculated_at` datetime DEFAULT NULL",
@@ -251,7 +242,7 @@ def build_tables():
             "CONSTRAINT `FK_PARKING_LOT_TO_PARKING_RISK_RESULT_1` FOREIGN KEY (`parking_lot_id`) "
             "REFERENCES `parking_lot` (`parking_lot_id`)",
         ], [("parking_lot_id", None), ("analysis_year", None), ("flood_risk_score", 2), ("rainfall_risk_score", 2),
-            ("lowland_risk_score", 2), ("total_risk_score", 4), ("risk_grade", None), ("risk_rank", None),
+            ("lowland_risk_score", 2), ("total_risk_score", None), ("risk_grade", None), ("risk_rank", None),
             ("calculated_at", None), ("result_id", None)],
             [(r["parking_code"], r["rain_year"], r["history"], r["rain"], r["terrain"], r["score"], r["level"],
               r["risk_rank"], CALCULATED_AT, r["id"]) for _, r in frame.iterrows()]),

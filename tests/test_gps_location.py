@@ -4,10 +4,10 @@ from unittest import mock
 
 from streamlit.testing.v1 import AppTest
 
-import parking_map
-from parking_map import GPS_ERRORS, GPS_INSECURE_ORIGIN, read_gps_result
+from services import parking_map
+from services.parking_map import GPS_ERRORS, GPS_INSECURE_ORIGIN, read_gps_result
 
-APP = str(Path(__file__).resolve().parent / "app.py")
+APP = str(Path(__file__).resolve().parents[1] / "app.py")
 CITY_HALL = {"coords": {"latitude": 37.5663, "longitude": 126.9779, "accuracy": 24.6}, "timestamp": 0}
 
 

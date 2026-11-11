@@ -11,7 +11,7 @@ import pydeck as pdk
 import streamlit as st
 from streamlit_js_eval import get_geolocation
 
-from map_payload import json_records
+from services.map_payload import json_records
 
 # 브라우저 위치 오류 코드(GeolocationPositionError.code)별 안내
 GPS_ERRORS = {
@@ -23,9 +23,11 @@ GPS_ERRORS = {
 GPS_INSECURE_ORIGIN = ("브라우저는 https 주소나 이 컴퓨터의 http://localhost 주소에서만 위치를 알려 줍니다. "
                        "http://192.168… 같은 네트워크 주소로 접속했다면 기준 위치를 직접 고르세요.")
 
+PREVIEW_LOCATION = (37.6333382, 127.0206239)
+
 # GPS를 쓸 수 없을 때 고르는 기준 위치 목록
 LOCATION_PRESETS = {
-    "색동공원 (강북구)": (37.6333382, 127.0206239),
+    "색동공원 (강북구)": PREVIEW_LOCATION,
     "강서구청": (37.5509, 126.8495),
     "도봉구청": (37.6688, 127.0471),
     "서대문구청": (37.5791, 126.9368),
@@ -156,8 +158,8 @@ def render_map(rows, lat, lon, radius, selected_id, show_all, has_location, fit_
     map_controls(show_all, lat, lon)
     records = json_records(rows[["id", "name", "address", "lat", "lon", "score", "level", "icon"]])
     for row in records:
-        row["label"] = "—" if row["score"] is None else f'{row["score"]:.1f}'
-        row["tip"] = "위험지수 미산정" if row["score"] is None else f'추정 위험지수 {row["score"]:.1f} / 100 · {row["level"]}'
+        row["label"] = "—" if row["score"] is None else str(row["score"])
+        row["tip"] = "위험지수 미산정" if row["score"] is None else f'위험지수 {row["score"]} / 100 · {row["level"]}'
 
     if fit_rows and records:
         view = pdk.data_utils.compute_view([[r["lon"], r["lat"]] for r in records], view_proportion=1)

@@ -15,10 +15,10 @@
     "은평구": 14
   },
   "source_sha256": {
-    "seoul_parking.csv": "8efcf42d07e853968c29c3e4872b86552ac0f0dfde4e1e899321391db27b2fa5",
-    "lowland.csv": "b860a02c266cc12cc6cf472ebe7ab975430d5aded7a971353b38bf6f69dcedf1",
-    "rainfall.csv": "b36ee6171709e885042dc529106206660a3b8659df1710f4bebe9dbe79e0d5a9",
-    "flood_depth.xlsx": "384a1c651ba2863e42e652770e15db9b91b4f2d879dfeff0906126f3cc65c46d"
+    "raw/seoul_parking.csv": "8efcf42d07e853968c29c3e4872b86552ac0f0dfde4e1e899321391db27b2fa5",
+    "raw/lowland.csv": "b860a02c266cc12cc6cf472ebe7ab975430d5aded7a971353b38bf6f69dcedf1",
+    "processed/rainfall.csv": "b36ee6171709e885042dc529106206660a3b8659df1710f4bebe9dbe79e0d5a9",
+    "raw/flood_depth.xlsx": "384a1c651ba2863e42e652770e15db9b91b4f2d879dfeff0906126f3cc65c46d"
   },
   "cases": [
     {

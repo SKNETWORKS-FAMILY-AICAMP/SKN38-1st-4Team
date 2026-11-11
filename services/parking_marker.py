@@ -23,6 +23,9 @@ RISK_BANDS = (
     (100, "매우 높음", "#0b2254", "#d3ddeb", "80–100"),
 )
 
+COLORS = {band[1]: band[2] for band in RISK_BANDS}
+COLORS["미산정"] = "#64748b"
+
 
 def risk_band(score):
     value = normalized_marker_score(score)

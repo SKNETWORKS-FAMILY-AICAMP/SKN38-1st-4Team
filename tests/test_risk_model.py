@@ -1,6 +1,6 @@
 import unittest
 
-from risk_model import annual_rainfall_metrics, distance_score, normalize_by_max, rainfall_risk, weighted_risk
+from services.risk_model import annual_rainfall_metrics, distance_score, normalize_by_max, rainfall_risk, weighted_risk
 
 
 class RiskModelTests(unittest.TestCase):

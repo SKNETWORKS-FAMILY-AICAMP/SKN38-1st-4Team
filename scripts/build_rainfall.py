@@ -1,10 +1,10 @@
-"""Rebuild data/rainfall.csv from KMA hourly rainfall downloads (기상자료개방포털 CSV).
+"""Rebuild data/processed/rainfall.csv from KMA hourly rainfall downloads (기상자료개방포털 CSV).
 
 Download the 2025 hourly rainfall CSV (방재기상관측 AWS 시간자료, 종관기상관측 ASOS 시간자료 for
-station 108) into data/kma_hourly/, then run from the project folder:
+station 108) into data/raw/kma_hourly/, then run from the project folder:
 
-    python build_rainfall.py              # check, then write data/rainfall.csv
-    python build_rainfall.py --check-only # check only
+    python scripts/build_rainfall.py               # check, then write data/processed/rainfall.csv
+    python scripts/build_rainfall.py --check-only  # check only
 
 Each district uses one station (STATIONS below). Annual metrics come from
 risk_model.annual_rainfall_metrics, the same rules the app documents. Rows already in
@@ -17,9 +17,13 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from risk_model import annual_rainfall_metrics, rainfall_risk
+ROOT = Path(__file__).resolve().parents[1]
+if not __package__:
+    sys.path.insert(0, str(ROOT))
 
-ROOT = Path(__file__).resolve().parent
+from services.data_paths import KMA_HOURLY_DIR, RAINFALL_CSV  # noqa: E402
+from services.risk_model import annual_rainfall_metrics, rainfall_risk  # noqa: E402
+
 YEAR = 2025
 # District -> KMA station number. The station named after the district when one exists,
 # otherwise the station whose address (기상자료개방포털 관측지점정보, 2026-11-11) lies in that district.
@@ -136,16 +140,16 @@ def number(value):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("inputs", nargs="*", help="기상청 시간자료 CSV 파일 또는 폴더 (기본: data/kma_hourly)")
-    parser.add_argument("--output", type=Path, default=ROOT / "data" / "rainfall.csv")
+    parser.add_argument("inputs", nargs="*", help="기상청 시간자료 CSV 파일 또는 폴더 (기본: data/raw/kma_hourly)")
+    parser.add_argument("--output", type=Path, default=RAINFALL_CSV)
     parser.add_argument("--check-only", action="store_true")
     args = parser.parse_args(argv)
 
     paths = []
-    for item in map(Path, args.inputs or [ROOT / "data" / "kma_hourly"]):
+    for item in map(Path, args.inputs or [KMA_HOURLY_DIR]):
         paths += sorted(item.glob("*.csv")) if item.is_dir() else [item]
     if not paths:
-        print("기상청 시간자료 CSV 가 없습니다. data/kma_hourly/ 에 내려받은 파일을 두세요.", file=sys.stderr)
+        print("기상청 시간자료 CSV 가 없습니다. data/raw/kma_hourly/ 에 내려받은 파일을 두세요.", file=sys.stderr)
         return 2
 
     rows, problems = build(paths, args.output)

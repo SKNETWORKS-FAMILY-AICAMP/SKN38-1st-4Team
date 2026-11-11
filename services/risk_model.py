@@ -2,6 +2,8 @@
 from collections import defaultdict
 from math import isfinite
 
+NOTE = "제공된 CSV의 상대 침수 위험지수 · 실시간 침수 예측이 아닙니다."
+
 
 def finite_number(value):
     try:

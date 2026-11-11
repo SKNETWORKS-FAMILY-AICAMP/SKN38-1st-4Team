@@ -11,11 +11,11 @@
 -- 연결 문자셋을 utf8mb4 로 맞춥니다. 클라이언트 문자셋이 latin1·euckr 이어도 한글 조건('위험지수')이 맞게 비교됩니다.
 SET NAMES utf8mb4;
 
--- 적재 확인: 정렬판 덤프가 끝까지 들어간 DB 인지 봅니다(위험지수 열의 소수 자릿수와 테이블마다 행 수).
+-- 적재 확인: 정렬판 덤프가 끝까지 들어간 DB 인지 봅니다(위험지수 열의 정수 형식과 테이블마다 행 수).
 --   팀 덤프만 있거나 적재가 중간에 끊겼으면 ERROR 1146(새_덤프를_먼저_끝까지_적재하세요 테이블 없음)으로 멈추고 아무것도 출력하지 않습니다.
 SET @skn_check = IF(
     (SELECT NUMERIC_SCALE FROM information_schema.columns WHERE table_schema = DATABASE()
-       AND table_name = 'parking_risk_result' AND column_name = 'total_risk_score') = 4
+       AND table_name = 'parking_risk_result' AND column_name = 'total_risk_score') = 0
     AND (SELECT COUNT(*) FROM faq) = 5 AND (SELECT COUNT(*) FROM flood_area) = 1132
     AND (SELECT COUNT(*) FROM parking_flood_distance) = 806 AND (SELECT COUNT(*) FROM parking_lot) = 806
     AND (SELECT COUNT(*) FROM parking_lowland) = 806 AND (SELECT COUNT(*) FROM parking_risk_result) = 806

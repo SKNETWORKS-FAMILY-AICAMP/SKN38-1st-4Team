@@ -53,9 +53,9 @@ if not exist "%CHIMCHAK_UV%" goto failed
 if errorlevel 1 goto failed
 :validate
 echo [3/3] Validating application...
-".venv\Scripts\python.exe" -m py_compile app.py parking_marker.py
+".venv\Scripts\python.exe" -m compileall -q app.py pages services
 if errorlevel 1 goto failed
-".venv\Scripts\python.exe" -c "from parking_marker import marker_icon, risk_band; assert risk_band(80)[1]; assert marker_icon(50)['url'].startswith('data:image/svg+xml')"
+".venv\Scripts\python.exe" -c "from services.parking_marker import marker_icon, risk_band; assert risk_band(80)[1]; assert marker_icon(50)['url'].startswith('data:image/svg+xml')"
 if errorlevel 1 goto failed
 echo Ready to start Streamlit.
 exit /b 0
