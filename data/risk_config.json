@@ -1,0 +1,7 @@
+{
+  "distance_method": "representative_point",
+  "distance_direction": "nearer_higher",
+  "rainfall_normalization": "source_max",
+  "lowland_reference_max": 100,
+  "display_scale": 100
+}
