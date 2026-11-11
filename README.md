@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/logo_main.png" width="180">
+
 # 🚘 침착 (CHIMCHAK)
 
 ### 데이터 분석 기반 침수 위험 주차장 비교 서비스
@@ -18,11 +20,6 @@
 
 > ⚠️ **안내:** 학습용 데이터 분석 프로젝트입니다. 위험지수는 침수 확률이나 실시간 예측 결과가 아니며, 낮은 점수도 안전을 보장하지 않습니다.
 
-## 현재 구현과 실행 안내
-
-현재 앱은 5개 구에서 최종 위험점수가 산정된 주차장 **137곳**을 서비스하며, FAQ는 **27개 질문·4개 카테고리**를 표시합니다. 최종 점수 원본은 `data/raw/parking_risk_result_recalculated.csv`입니다.
-
-설치·GPS 사용·`.env` 설정·실제 화면 기능과 테스트 방법은 [실행·개발 안내](docs/run_guide.md)를 확인하세요. 카카오 자동차 길찾기는 지도 상세 패널에서 쓸 수 있으며 루트 `.env`의 `KAKAO_REST_API_KEY`가 필요합니다.
 
 ## 📌 목차
 
@@ -249,7 +246,11 @@
 | 상대 고도 비교 | 주차장 고도 ↔ 반경 300m 고도 중앙값 비교 |
 | 가중합 | 강수·저지대·침수 이력 점수 통합 |
 
+
 ## 📂 프로젝트 구조
+
+<details>
+<summary>폴더 구조</summary>
 
 ```text
 project/
@@ -273,6 +274,8 @@ project/
 ├── requirements.txt
 └── README.md
 ```
+
+</details>
 
 ## 🚀 실행 방법
 
