@@ -47,22 +47,22 @@
     <td align="center" width="25%" valign="top">
       <img src="assets/damin.png" width="140" alt="이다민"><br>
       <strong>이다민</strong><br>
-      <sub>Project Lead<br>Data Engineering</sub>
+      <sub><span style="font-weight: 400;">Project Lead<br>Data Engineering</span></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/doyeon.png" width="140" alt="황도연"><br>
       <strong>황도연</strong><br>
-      <sub>Data Analysis<br>Service Planning</sub>
+      <sub><span style="font-weight: 400;">Data Analysis<br>Service Planning</span></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/jungwook.png" width="140" alt="박정욱"><br>
       <strong>박정욱</strong><br>
-      <sub>Frontend Development<br>Data Processing</sub>
+      <sub><span style="font-weight: 400;">Frontend Development<br>Data Processing</span></sub>
     </td>
     <td align="center" width="25%" valign="top">
       <img src="assets/eungyu.png" width="140" alt="백은규"><br>
       <strong>백은규</strong><br>
-      <sub>UI/UX Design<br>Map Integration</sub>
+      <sub><span style="font-weight: 400;">UI/UX Design<br>Map Integration</span></sub>
     </td>
   </tr>
   <tr>
@@ -98,7 +98,6 @@
     </td>
   </tr>
 </table>
-
 
 
 ## 💡 프로젝트 개요
