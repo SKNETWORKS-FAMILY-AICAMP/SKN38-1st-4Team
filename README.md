@@ -13,7 +13,7 @@
 **SK Networks Family AI Camp 38기 · 1차 프로젝트**
 
 <!-- 배포 후 실제 주소로 교체
-[🌐 서비스 바로가기](https://YOUR-DEPLOYED-URL) · [🎬 시연 영상](https://YOUR-DEMO-URL)
+[🌐 서비스 바로가기](https://YOUR-DEPLOYED-URL) · 
 -->
 
 </div>
@@ -42,12 +42,49 @@
 
 ## 👥 팀 소개
 
-| 팀원 | 담당 분야 | 주요 업무 |
-|---|---|---|
-| **이다민** | **Project Lead · Data Engineering** | 프로젝트 총괄 및 서비스 기획 주도<br>ERD 설계 및 데이터베이스 구축·적재<br> 데이터 정제·정규화 및 전처리|
-| **황도연** | **Data Analysis · Service Planning** | 강수량 데이터 조사·수집<br>데이터 간 연관성 분석 및 전처리 로직 설계<br>시장 조사 및 문제 정의<br>프로젝트 발표 및 서비스 시연 |
-| **박정욱** | **Frontend Development · Data Processing** | 프론트엔드 기능 개발<br>Git/GitHub 저장소 관리<br>지형·고도 데이터 조사·수집<br>데이터 정제·정규화 및 전처리 |
-| **백은규** | **UI/UX Design · Map Integration** | 서비스 기능 테스트 및 품질 검증(QA)<br>프론트엔드 UI 디자인<br>침수흔적도 데이터 조사·수집 및 전처리 |
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <img src="assets/damin.png" width="160"><br>
+      <b>이다민</b><br>
+      <b>Project Lead · Data Engineering</b>
+      <hr>
+      프로젝트 총괄 및 서비스 기획 주도<br>
+      ERD 설계 및 데이터베이스 구축·적재<br>
+      데이터 정제·정규화 및 전처리
+    </td>
+    <td align="center" width="25%">
+      <img src="assets/doyeon.png" width="160"><br>
+      <b>황도연</b><br>
+      <b>Data Analysis · Service Planning</b>
+      <hr>
+      강수량 데이터 조사·수집<br>
+      데이터 간 연관성 분석 및 전처리 로직 설계<br>
+      시장 조사 및 문제 정의<br>
+      프로젝트 발표 및 서비스 시연
+    </td>
+    <td align="center" width="25%">
+      <img src="assets/jungwook.png" width="160"><br>
+      <b>박정욱</b><br>
+      <b>Frontend Development · Data Processing</b>
+      <hr>
+      프론트엔드 기능 개발<br>
+      Git/GitHub 저장소 관리<br>
+      지형·고도 데이터 조사·수집<br>
+      데이터 정제·정규화 및 전처리
+    </td>
+    <td align="center" width="25%">
+      <img src="assets/eungyu.png" width="160"><br>
+      <b>백은규</b><br>
+      <b>UI/UX Design · Map Integration</b>
+      <hr>
+      서비스 기능 테스트 및 품질 검증(QA)<br>
+      프론트엔드 UI 디자인<br>
+      침수흔적도 데이터 조사·수집 및 전처리
+    </td>
+  </tr>
+</table>
+
 
 ## 💡 프로젝트 개요
 
