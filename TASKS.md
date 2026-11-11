@@ -18,7 +18,7 @@
 
 - [x] api-env — 루트 `.env` 생성·카카오 길찾기 클라이언트 인증 연결. 키가 없으면 HTTP 미호출, 운영 환경 변수 우선. 의존성·배치 검사·문서 갱신, 전체 테스트 37개 통과. 근거 `.handoff/api-env.md` (2026-11-11)
 - [x] scored-service-only — 산정된 137개만 서비스 개수·검색·목록·지도·비교·분석에 포함. 미산정 안내 제거, 이전 세션 선택 초기화. 전체 38개 테스트 통과. 근거 `.handoff/scored-service-only.md` (2026-11-11)
-- [ ] remote-history-integration — 원격 ff922d9와 로컬 5206918 비교·원본 백업·README 내용 통합 준비 완료. 전체 38개 통과. 사용자가 Git 이력 병합 시작 후 충돌 파일을 준비본과 대조·해결하고 재검증. 근거 `.handoff/merge-latest/report.md` (2026-11-11)
+- [ ] remote-history-integration — 로컬 b623d67에서 최신 원격 da6377f 병합 충돌 24개 내용 해결·38개 테스트 통과. 최신 원격 README·이미지 4개와 기존 앱 기능 보존, 동일한 루트 CSV 제거. 사용자 스테이징·병합 커밋·push 대기. 근거 `.handoff/merge-current/report.md` (2026-11-11)
 
 ## 지켜야 할 제약
 - (2026-11-11) "python라이브러리에서 GPS 라이브러리 이용해서 현재위치 기능 추가해줘."
@@ -28,33 +28,21 @@
 - (2026-11-11) 사용자 지시: Codex는 Git 명령을 직접 실행하지 않는다.
 
 ## 인계
-- 갱신: 2026-11-11 (remote-history-integration 내용 통합 준비 · 사용자 Git 병합 대기)
-- 상태(remote-history-integration): 원격 README 전체 보존 + 로컬 실행 안내 `docs/run_guide.md`. 앱·SQL·데이터 유지. 양쪽 원본·비교표·복구용 준비본은 `.handoff/merge-latest/`. `.handoff/` 업로드 제외.
-- 다음 행동(remote-history-integration): 사용자가 `.handoff/merge-latest/report.md`의 Git 단계 실행 후 `git status --short` 전달. 공통 조상 조회 결과 없음. Codex는 Git 명령 미실행.
-- 마지막 검증(remote-history-integration): 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK. CSV 원격·로컬 SHA-256 동일, FAQ 외 6개 SQL 입력 블록 동일, README 원문·백업 해시·문서 파일 링크 확인.
-- 상태(risk-csv-location): `data/raw/parking_risk_result_recalculated.csv`로 이동, `services/data_paths.py:14`·README·`docs/risk_model.md:3` 경로 갱신. 루트 사본 없음. 이번 작업 완료, Git 명령 미실행.
-- 마지막 검증(risk-csv-location): `/var/folders/km/_1_1x78175s0pkx210lr4xr00000gn/T/faq-verify-ik8vjdbu/bin/python -B -m unittest discover -s tests -t .` → 37 OK. 이동 전후 SHA-256 `d30304771fa6364ce1b961d7bb771fec69505c2a8978cee86f081b34542d4934` 동일, 점수 137개·서비스 미산정 26개 유지.
-- 상태(api-env): `services/api_config.py:10`이 루트 `.env`의 키를 읽고 `services/kakao_navi.py:14`가 인증한다. 운영 환경 변수 우선, 파일 값은 요청 시 갱신. 의존성·배치 검사·문서 반영, `.env*` 업로드 제외.
-- 상태(faq-sql-categories): `sql/Table07_faq.sql`로 원본을 이동하고 `services/faq.py:7`의 경로를 갱신했다. FAQ 27개·카테고리 4개를 표시하며 덤프·조회 SQL·README도 동기화했다.
-- 다음 행동: 사용자 단계 5번의 키 입력·의존성 설치 후 앱 재실행. 길찾기 패널은 비활성이고 키 설정만으로 표시되지 않는다. Git 확인·커밋·업로드는 사용자 담당.
-- 다음 행동(faq): `docs/upload_guide.md`의 FAQ 13개 경로 반영. 원격 루트 `Table07_faq.sql`은 삭제하고 `sql/Table07_faq.sql`만 유지.
-- 마지막 검증: 임시 Python 3.12에서 `python -B -m unittest discover -s tests -t .` → 37 OK(인증 헤더·빈 키·기존 AppTest 포함), Python 31개 구문·실행 폴더 독립 확인. 실제 키 미입력으로 실서버 인증, Windows 배치 실행 미검증. `.handoff/api-env.md`.
-- 마지막 검증(faq): SQL 이동 후 33 OK, 원본 SHA-256 동일·덤프는 경로 주석 외 동일·업로드 13개 경로 실재. `.handoff/faq-categories.md`.
-- 제한(faq): 원문 FAQ024의 164곳과 현재 산정 137곳이 다르며 제공 문구는 유지했다. 실제 MySQL 적재·브라우저 시각 검증은 미실행.
-- 상태(home-syntax): `pages/0_Home.py:34` 닫는 괄호 수정 후 이번 전체 33개 테스트·홈 AppTest 통과.
-- 상태(supplied-risk-scores): CSV G열 `total_risk_score`를 `parking_lot_id`로 연결. 137개 원점수 21~80, `Int64`. 서비스는 산정 137개만 포함. SQL 전체 806개 중 669개 점수 NULL은 유지.
-- 마지막 검증(supplied-risk-scores): 기존 29개 통과·정수 표시·원본 점수 일치 확인 후, 이번 FAQ 수정에서도 전체 33개 통과 및 점수 테이블 무변경 확인.
-- 상태(restructure): `docs/restructure/target_map.md` 4단계 완료. 앱은 `app.py`로 실행. README의 새 테스트 명령이 이 문서 상단의 이동 전 GPS 판정 명령을 대체한다.
-- 다음 행동(restructure): 구조 정리 완료. 추가 Git 확인·커밋은 사용자가 직접 관리한다(Codex의 Git 명령 실행 금지).
-- 마지막 검증(restructure): Homebrew Python 3.12 환경에서 29개 OK(기존 28개 + 화면 회귀 1개). AppTest와 실제 Streamlit 서버의 버튼 이벤트로 홈 → FAQ → 분석 → 홈, 5개 구·163개 확인. 생성 SQL의 주석 외 전체가 변경 전 생성 기준과 일치, 기존 덤프의 FAQ004 GPS 문구 동기화. 실제 브라우저 시각 검증과 Windows 배치 실행은 미실행.
-- 커밋 안 된 파일: 사용자 조회에서 이미 staged인 `TASKS.md` + 이번 `.gitignore`, `README.md`, `docs/run_guide.md`(신규), `docs/upload_guide.md`. 이후 Git 상태는 사용자 재조회 필요. `.env` 유지.
-- 한도 대비(사용자 지시 2026-11-11 "세션이 한도에 걸릴 경우 codex cli를 이용해서 작업 계속 이어가도록 해"): 대본에 "You've hit your session limit" 가 마지막이면 .handoff/codex_fallback.py 가 herdr-launcher 로 codex(--effort high)를 띄워 .handoff/cards/<이름>.md 로 잇는다
-- 기준점: git 커밋 57e85ef(구조 정리 전 전체, docs/restructure 제외) · 판정 명령+test_build_rainfall → 28 통과 · 실패 0 (09:24)
-- 서비스 범위(scored-service-only): `services/parking_data.py:34`에서 서비스 5개 구 + score.notna() 필터. 산정 137개만 개수·검색·목록·지도·비교·분석에 노출. 데이터 버전 `scored-service-v5`로 이전 선택 초기화.
-- 다음 행동(rainfall, 보류): 구를 늘릴 때만 「사용자 단계」 3번 로그인 → AWS 23지점(`scripts.build_rainfall.STATIONS`, 108 제외) + ASOS 108의 2025 시간 강수량 CSV를 `data/raw/kma_hourly/`에 → `python scripts/build_rainfall.py --check-only` → 강수 집계 갱신. 최종 위험지수는 별도로 점수 CSV에 추가.
-- 마지막 검증(서비스 범위): 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK. AppTest 지도 137개·미산정 이름 검색 0개·비교 선택 137개·분석 합계 137개·이전 세션 초기화 확인. 근거 `.handoff/scored-service-only.md`.
-- git: 2026-11-11 09:24 저장소 만듦(main). 현재 세션은 사용자 지시에 따라 모든 Git 명령을 실행하지 않는다.
-- 미결정: 없음 (사용자가 2026-11-11 '5개 구 우선' 선택)
+- 갱신: 2026-11-11 12:14 (병합 충돌 내용 해결·사용자 Git 등록 대기)
+- 상태(remote-history-integration): 로컬 b623d67 + 원격 da6377f 병합 진행 중. 충돌 24개 내용 해결. 최신 원격 README·이미지 4개 보존, 실행 안내 추가·앱 기능 유지, 동일한 루트 CSV 제거. `.handoff/merge-current/report.md:1`.
+- 다음 행동: 사용자 `git add -u` → `git diff --name-only --diff-filter=U` 출력 없음 확인 → `git commit -m "원격 main 병합 및 로컬 기능 유지"` → `git push origin main`. 실행 결과로 병합·업로드 완료 확인.
+- 마지막 검증: 임시 Python 3.12 `python -B -m unittest discover -s tests -t .` → 38 OK(1.641초). 충돌 표시 52파일 없음, Python 31개 구문 OK. 해결 24개·이미지 4개 해시와 최신 원격 README 보존·CSV 동일성 확인. `.handoff/merge-current/report.md:17`.
+- 커밋 안 된 파일: 충돌 24개(내용 해결·인덱스 미해결) + TASKS.md 갱신, 원격 이미지 4개 추가(staged)·루트 중복 CSV 삭제(등록 대기). 경로·해시 `.handoff/merge-current/resolution.json`. `.env` 유지.
+- Git 제약: Codex는 모든 Git 명령·인덱스 쓰기를 실행하지 않는다. 사용자가 스테이징·커밋·push를 진행한다.
+- 복구: 실제 충돌 원본·양쪽 버전 `.handoff/merge-current/`, 이전 원본·준비본 `.handoff/merge-latest/`. 이전 인계 전문 `.handoff/merge-current/previous-handoff.md`. `.handoff/`는 업로드 제외. 이전 준비본으로 최신 README를 덮지 않는다.
+- 서비스 기준: `services/parking_data.py:34`에서 5개 구 + score.notna() 필터. 점수 CSV 137곳만 지도·검색·비교·분석에 표시. 버전 scored-service-v5. 전체 데이터 806곳 중 669곳 점수 NULL 유지. `.handoff/scored-service-only.md`.
+- 점수 경로: `data/raw/parking_risk_result_recalculated.csv`만 유지. 루트 중복 제거 전후 SHA-256 d30304771fa6364ce1b961d7bb771fec69505c2a8978cee86f081b34542d4934 동일. 위험점수 137개는 정수 21~80.
+- FAQ: `sql/Table07_faq.sql` 원본 27개·4개 분류, `services/faq.py:7`에서 읽음. 덤프·조회 SQL 동기화. FAQ024의 원문 164곳과 현재 137곳 차이는 제공 문구 유지. `.handoff/faq-categories.md`.
+- API 다음 행동: 사용자 키 입력·의존성 설치 후 앱 재실행. `services/api_config.py:10`이 루트 .env를 읽으며 운영 환경 변수 우선. 길찾기 패널은 비활성이라 키만 넣어도 표시되지 않는다. 실서버 인증 미검증. `.handoff/api-env.md`.
+- 구조 정리: `app.py` 실행, `docs/restructure/target_map.md` 4단계 완료. 상단 이동 전 테스트 명령 대신 현재 discover 명령 사용. Windows 배치·이번 실제 MySQL 적재·브라우저 시각 검증은 미실행.
+- rainfall-all-districts 보류: 사용자 5개 구 우선 선택. 확대 시 AWS 23지점 + ASOS 108의 2025 시간 강수량을 data/raw/kma_hourly/에 확보 → `python scripts/build_rainfall.py --check-only`. 최종 점수 CSV는 별도 확보.
+- 한도 대비: 사용자 지시로 만든 `.handoff/codex_fallback.py`와 `.handoff/sessions.json` 설명은 「결정」 참조. 설정·감시기 생존은 이번 확인하지 않음.
+- 미결정: 없음. 병합 커밋·원격 업로드는 아직 미완료.
 
 ## 사용자 단계
 1. 켜져 있는 앱(localhost:8501, 08:52 시작)을 끄고 다시 켠다 — 이전 코드를 메모리에 들고 있어 GPS 버튼이 안 보인다.

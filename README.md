@@ -45,12 +45,12 @@
 
 ## 👥 팀 소개
 
-| 팀원 | 담당 | GitHub |
-|:---|:---|:---|
-| 팀원 1 | 추후 입력 | 추후 입력 |
-| 팀원 2 | 추후 입력 | 추후 입력 |
-| 팀원 3 | 추후 입력 | 추후 입력 |
-| 팀원 4 | 추후 입력 | 추후 입력 |
+| 팀원 | 담당 분야 | 주요 업무 |
+|---|---|---|
+| **이다민** | **Project Lead · Data Engineering** | 프로젝트 총괄 및 서비스 기획 주도<br>ERD 설계 및 데이터베이스 구축·적재<br> 데이터 정제·정규화 및 전처리|
+| **황도연** | **Data Analysis · Service Planning** | 강수량 데이터 조사·수집<br>데이터 간 연관성 분석 및 전처리 로직 설계<br>시장 조사 및 문제 정의<br>프로젝트 발표 및 서비스 시연 |
+| **박정욱** | **Frontend Development · Data Processing** | 프론트엔드 기능 개발<br>Git/GitHub 저장소 관리<br>지형·고도 데이터 조사·수집<br>데이터 정제·정규화 및 전처리 |
+| **백은규** | **UI/UX Design · Map Integration** | 서비스 기능 테스트 및 품질 검증(QA)<br>프론트엔드 UI 디자인<br>침수흔적도 데이터 조사·수집 및 전처리 |
 
 ## 💡 프로젝트 개요
 
@@ -123,7 +123,6 @@
 | [방재기상관측(AWS)](https://data.kma.go.kr/data/grnd/selectAwsRltmList.do?pgmNo=56) | 기상청 | 2025년 시간별 강수량을 이용한 강수 위험도 산출 |
 | [서울시 경사도](https://data.seoul.go.kr/dataList/OA-22241/F/1/datasetView.do) | 서울특별시 도시공간본부 도시계획상임기획과 | 표고점·등고선 등 관련 지형자료를 활용한 상대 고도 차이 분석 |
 
-> 서울시 경사도 자료는 표고점·등고선 SHP 등 지형자료를 제공하는 것으로 안내되어 있습니다. 실제 고도 추출·변환 과정은 팀의 전처리 코드와 함께 확인해 주세요.
 
 ### 분석 범위
 
@@ -237,8 +236,6 @@
 | Language | **Python** | 전처리·분석·서비스 로직 |
 | Data Analysis | **Pandas** | 데이터 로딩, 결측치 정리, 병합, 그룹별 분석 |
 | Numerical Computing | **NumPy** | 수치 연산, 조건별 점수 계산, 표준화 보조 |
-| Chart | **Altair** | 위험지수 분포·비교 그래프 |
-| Map | **Pydeck** | 위도·경도 기반 주차장·위험도 지도 |
 | Web | **Streamlit** | 검색·비교·대시보드 화면 |
 | Database | **MySQL** | 전처리 데이터 및 분석 결과 관리 |
 | Collaboration | **Git / GitHub** | 버전 관리 및 팀 협업 |
